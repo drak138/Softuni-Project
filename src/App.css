@@ -1,0 +1,11 @@
+.line{
+  width: 100%;
+  border-bottom:solid 0.2rem white;
+}
+.cryptoWrapper{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 4%;
+    min-width: 913px;
+    gap: 20px;
+}

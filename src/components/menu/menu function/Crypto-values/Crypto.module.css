@@ -1,0 +1,119 @@
+.cryptoWrapper{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 4%;
+    min-width: 913px;
+    gap: 20px;
+  }
+  .btc{
+      height: fit-content;
+      width: 48%;
+      /* za mac trqbwa width da e 48% */
+      min-width: 563px;
+      border: solid 2px #03e2ef;
+      background-color: #536097;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex-wrap: wrap;
+  }
+  .nameWrapper{
+      height: 57px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-left: 20px;
+  }
+  .name{
+    font-size: 32px;
+  }
+  img{
+    width: 52px;
+  }
+  .btcPriceWrapper{
+      margin-right: 10px;
+      position: relative;
+      top: 10rem
+  }
+  .btcPrice{
+    font-size: 46px;
+  }
+
+  /* eth///////////////////////////////////////////////////////////////////////////// */
+
+.eth{
+  z-index: 0;
+    height: fit-content;
+    width: 48%;
+    min-width: 563px;
+    border: solid 2px #03e2ef;
+    background-color: #536097;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.nameWrapper{
+    height: 57px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 20px;
+}
+.name{
+  font-size: 32px;
+}
+img{
+  width: 52px;
+}
+.ethPriceWrapper{
+    margin-right: 20px;
+    position: relative;
+    top: 10rem
+}
+.ethPrice{
+  font-size: 46px;
+
+}
+
+/* BNB style ////////////////////////////////////////////////////////////*/
+
+.bnb{
+    height: fit-content;
+    width: 48%;
+    min-width: 563px;
+    border: solid 2px #03e2ef;
+    background-color: #536097;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.nameWrapper{
+    height: 57px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 20px;
+}
+.name{
+  font-size: 32px;
+}
+img{
+  width: 52px;
+}
+.bnbPriceWrapper{
+    margin-right: 52px;
+    position: relative;
+    top: 10rem
+}
+.bnbPrice{
+  font-size: 46px;
+  color: black;
+}
+.apexchartsToolbar{
+  z-index: 0;
+}
