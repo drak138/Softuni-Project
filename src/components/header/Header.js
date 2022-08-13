@@ -1,10 +1,11 @@
 import styles from './header.module.css'
-import { Profiler, useEffect, useState, useRef } from 'react';
+import {useState } from 'react';
 import { db, auth } from '../../firebase';
-import {addDoc, getDocs, collection, setDoc, doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore'
-import {getAuth,createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail} from 'firebase/auth'
+import {setDoc, doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore'
+import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail} from 'firebase/auth'
 import validator from 'validator'
 import { async } from '@firebase/util';
+import { Link, Router } from 'react-router-dom';
 
 export const Header = () =>{
     const[regUsername,setRegUsername]=useState('')
@@ -62,11 +63,8 @@ export const Header = () =>{
   const[showDel,setShowDel]=useState(false)
 
   const [editN, setEditN]=useState(false)
-  const [editP, setEditP]=useState(false)
   const [editE, setEditE]=useState(false)
 
-
-  const prevPass=usePrevious('')
   
      const register= async ()=>{
        setregisClicked(current=>!current)
@@ -130,7 +128,7 @@ export const Header = () =>{
           setError("Invalid E-mail")
         } 
         else if(error.message==("Firebase: Error (auth/user-not-found).")){
-          setError("User could not be found")
+          setError("Wrong user E-mail")
         }
         else{
           setError("")
@@ -325,12 +323,13 @@ export const Header = () =>{
     //     getUsers();
     //    },[]);
 
-    const usernameChangeHandler=(e)=>{
-        setRegUsername(e.target.value)
-    }
-    const passwordChangeHandler=(e)=>{
-        setRegPassword(e.target.value)
-    }
+    // const usernameChangeHandler=(e)=>{
+    //     setRegUsername(e.target.value)
+    // }
+    // const passwordChangeHandler=(e)=>{
+    //     setRegPassword(e.target.value)
+    // }
+
     const emailChangeHandler=(e)=>{
         setRegEmail(e.target.value)
         validateEmail(e)
@@ -340,9 +339,7 @@ export const Header = () =>{
       setEditN(current=>!current)
       setRegUsername("")
     }
-    const handleEditP=()=>{
-      setEditP(current=>!current)
-    }
+    
     const handleEditE=()=>{
       setEditE(current=>!current)
     }
@@ -353,7 +350,28 @@ export const Header = () =>{
       setConfirmPass("")
     }
 
-    
+    const closeReg=()=>{
+      setregisClicked(false)
+      setPassType("password")
+      setShowPass(false)
+      setPassType2("password")
+      setShowPass2(false)
+      setRegUsername("")
+      setRegEmail("")
+      setRegPassword("")
+      setConfirmPass("")
+      setConfirmPass2("")
+      setError("")
+    }    
+
+    const closeLog=()=>{
+      setlogisClicked(false)
+      setPassType("password")
+      setShowPass(false)
+      setLoginEmail("")
+      setLoginPassword("")
+      setError("")
+    }
 
   const handleLog=()=>{
     setlogisClicked(current=>!current)
@@ -366,12 +384,12 @@ export const Header = () =>{
   }
     return(
         <header style={styles} className={styles.container}>
-            <img style={{right:expand? "33.4%":null}} src={require ("./logo.png")} alt="logo here" />
+            <div><Link to='/'><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link></div>
             {
             User?
             <div 
             style={{border:expand? "solid":null,borderColor:expand? "white":null,borderWidth:expand? "2px":null,
-            position:expand? 'absolute':'relative',left:expand?"88.3%":null,
+            position:expand?'absolute':'relative',left:expand? '88.3%':null,
             backgroundColor:expand?'#46507c':null,
             top:expand? "35%":null}} 
             className={styles.profile}>
@@ -394,6 +412,7 @@ export const Header = () =>{
             {
             regisClicked?<div className={styles.register}>
                 <div>
+                <i onClick={closeReg} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
                     <div>
                         <label htmlFor="username">Username:</label>
                         <input 
@@ -445,8 +464,9 @@ export const Header = () =>{
                         {confirmPass==regPassword? <p style={{color:'green', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords Match</p>:null}</div>:null
                         }
                     </div>
+                    <p onClick={handleLog} style={{margin:'0',color:'blue',cursor:'pointer'}}>Already have an account</p>
                     {confirmPass==regPassword?<div>
-                        <button onClick={register}>Register</button>
+                        <button style={{color:'white', backgroundColor:'transparent', border:'none'}} onClick={register}>Register</button>
                     </div>:
                     <div><button>Register</button></div>}
                 </div>
@@ -455,6 +475,7 @@ export const Header = () =>{
             {
             logisClicked?<div className={styles.login}>
             <div>
+            <i onClick={closeLog} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
               <div>
                 <label htmlFor="email">Email:</label>
                   <input 
@@ -523,7 +544,11 @@ export const Header = () =>{
                      placeholder='Enter new E-mail'/>
                      <div style={{marginTop: '15px',display: 'flex',position: 'relative', flexDirection: 'row', justifyContent: 'space-between', width: '92%'}}>
                       <button onClick={()=>setEditE(false)}>Cancel</button>
-                     {regEmail?<div>{regEmail==userE?<p>E-mail must be different</p>:<button disabled={!(/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(regEmail))} onClick={changeEmail}>Edit E-mail</button>}</div>
+                     {regEmail?
+                     <div style={{marginLeft:'2rem', marginRight:'1rem'}}>
+                     {regEmail==userE?<p style={{margin:'0'}}>E-mail must be different</p>:<button disabled={!(/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(regEmail))} onClick={changeEmail}>Edit E-mail</button>
+                     }
+                     </div>
                      :<span style={{marginLeft: '40px',marginRight: '19px'}}>You need to fill new E-mail</span>
                      }
 
@@ -614,12 +639,3 @@ export const Header = () =>{
           </div>:null}
        </header>
       )}
-     function usePrevious(value) {
-        const ref = useRef();
-        useEffect(() => {
-            ref.current = value;
-          }, [value]);
-          return ref.current;
-        }
-        // (/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/
-      
