@@ -1,18 +1,35 @@
 import styles from './header.module.css'
-import {useState } from 'react';
+import {useEffect, useState } from 'react';
 import { db, auth } from '../../firebase';
-import {setDoc, doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore'
+import {setDoc, doc, getDoc, deleteDoc, updateDoc, addDoc} from 'firebase/firestore'
 import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail} from 'firebase/auth'
 import validator from 'validator'
 import { async } from '@firebase/util';
-import { Link, Router } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 
 export const Header = () =>{
+
+   const[DocF,setDocF]=useState(Boolean)
+   const[DocF2,setDocF2]=useState(Boolean)
+   const[DocUid,setDocUid]=useState('')
+   const[DocUid2, setDocUid2]=useState('')
     const[regUsername,setRegUsername]=useState('')
 
     const [emailError, setEmailError] = useState('')
 
     const[userP,setUserP]=useState('')
+
+    const[showIntrested,setShowIntrested]=useState(false)
+
+    const[follow,setFollow]=useState(false)
+
+    const[followEtherium,setFollowEtherium]=useState(Boolean)
+
+    const[followingEth,setFollowingEth]=useState(Boolean)
+
+    const[followBNB,setFollowBNB]=useState(Boolean)
+
+    const[followingBNB,setFollowingBNB]=useState(Boolean)
 
     const[userChangePass,setUserChangePass]=useState('')
 
@@ -32,13 +49,13 @@ export const Header = () =>{
 
     const[loginEmail,setLoginEmail]=useState('')
 
-    const [User, setUser]=useState('')
+    const [CurUser, setUser]=useState('')
 
     const [delUser,setDelUser]=useState('')
 
     const [userN,setUserN]=useState('')
 
-    const [userE,setUserE]=useState('')
+    const[userE,setUserE]=useState('')
 
     const [logisClicked,setlogisClicked]=useState(false);
 
@@ -67,34 +84,39 @@ export const Header = () =>{
 
   
      const register= async ()=>{
-       setregisClicked(current=>!current)
-         try{
-        const user = await createUserWithEmailAndPassword(auth, regEmail, regPassword)
-        await setDoc(doc(db, "Users",user.user.uid ), {displayName: regUsername, Email: regEmail, Password: regPassword})
-        const docRef=(doc(db,"Users",user.user.uid))
-        const docRefP=doc(db,"Users",user.user.uid)
-        const docRefE=((doc(db,"Users",user.user.uid)))
-        const docName= await getDoc(docRef)
-        const docE= await getDoc(docRefE)
-        setUserChangePass(docRefP)
-        setDelUser(docRef)
-        setUserN(docName.data().displayName)
-        setUserE(docE.data().Email)
-        setUserP(docName.data().Password)
-        setPassType("password")
-        setShowPass(false)
-        setPassType2("password")
-        setShowPass2(false)
-        setPassType3("password")
-        setShowPass3(false)
-    }catch (error){
-            console.log(error.message)
-        }
-        onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-          })
-          setShowPass(false)
-    }
+      setregisClicked(current=>!current)
+        try{
+       const user = await createUserWithEmailAndPassword(auth, regEmail, regPassword)
+       await setDoc(doc(db, "Users",user.user.uid ), {displayName: regUsername, Email: regEmail, Password: regPassword, followedEtherium:false,followedBNB:false})
+       const docRef=(doc(db,"Users",user.user.uid))
+       const docRefP=doc(db,"Users",user.user.uid)
+       const docRefF=doc(db,"Users",user.user.uid)
+       const docRefE=((doc(db,"Users",user.user.uid)))
+       const docName= await getDoc(docRef)
+       const docE= await getDoc(docRefE)
+       setDocF2(docName.data().followedBNB)
+       setDocF(docName.data().followedEtherium)
+       setDocUid(docRefF)
+       setUserChangePass(docRefP)
+       setDelUser(docRef)
+       setUserN(docName.data().displayName)
+       setUserE(docE.data().Email)
+       setUserP(docName.data().Password)
+       setPassType("password")
+       setShowPass(false)
+       setPassType2("password")
+       setShowPass2(false)
+       setPassType3("password")
+       setShowPass3(false)
+       console.log(DocF)
+   }catch (error){
+           console.log(error.message)
+       }
+       onAuthStateChanged(auth, (currentUser) => {
+           setUser(currentUser);
+         })
+         setShowPass(false)
+   }
     const login= async ()=>{
         try{
             const user= await signInWithEmailAndPassword(
@@ -105,19 +127,28 @@ export const Header = () =>{
             const docRef=(doc(db,"Users",user.user.uid))
             const docRefE=((doc(db,"Users",user.user.uid)))
             const docRefP=doc(db,"Users",user.user.uid)
+            const docRefF=(doc(db,"Users",user.user.uid))
+            const docTest= await getDoc(docRefF)
             const docName = await getDoc(docRef)
             const docE= await getDoc(docRefE)
+            // setDocUid2(docRefF)
+            setDocUid(docRefF)
+            setDocF2(docName.data().followedBNB)
+            setDocF(docName.data().followedEtherium)
+            setFollowingBNB(docE.data().followedBNB)
+            setFollowingEth(docE.data().followedEtherium)
             setDelUser(docRef)
+            setUserE(docName.data().Email)
             setUserN(docName.data().displayName)
             setUserP(docName.data().Password)
             setUserChangePass(docRefP)
-            setUserE(docE.data().Email)
             setlogisClicked(false)
             setPassType("password")
             setPassType2("password")
             setShowPass2(false)
             setPassType3("password")
             setShowPass3(false)
+            console.log(DocF)
         } catch (error){
           console.log(error.message)
         setlogisClicked(true)
@@ -135,10 +166,18 @@ export const Header = () =>{
         }
         }
         onAuthStateChanged(auth, (currentUser) => {
+          // if(DocF===false){
+          //   setFollowEtherium(prevFollowEtherium=>!prevFollowEtherium)
+          //   setDocF(prevsetDocF=>!prevsetDocF)
+          // }
+          // else if(DocF===true){
+          //   setFollowEtherium(prevFollowEtherium=>!prevFollowEtherium)
+          //   setDocF(prevsetDocF=>!prevsetDocF)
+          // }
             setUser(currentUser);
           })
+          console.log(DocUid2)
     }
-
 
      const togglePassword=()=>{
     setShowPass(current=>!current)
@@ -173,13 +212,14 @@ export const Header = () =>{
 
 
     const logout=async()=>{
+      await signOut(auth);
+      setFollowingEth(false)
       setPassType("password")
       setShowPass(false)
       setPassType2("password")
       setShowPass2(false)
       setPassType3("password")
       setShowPass3(false)
-        await signOut(auth);
         setShowProfile(false);
         setExpand(false)
         setShowDel(false)
@@ -195,7 +235,7 @@ export const Header = () =>{
     const newPass=(regPassword)
     const changePass=()=>{
       try{
-        updatePassword(User,newPass)
+        updatePassword(CurUser,newPass)
       } catch(error){
 
       }
@@ -204,6 +244,7 @@ export const Header = () =>{
       }catch(error){
 
       }
+      setFollowingEth(false)
       setPassType("password")
       setShowPass(false)
       setPassType2("password")
@@ -228,6 +269,7 @@ export const Header = () =>{
       } catch(error){
 
       }
+      setFollowingEth(false)
       setPassType("password")
       setShowPass(false)
       setPassType2("password")
@@ -249,18 +291,12 @@ export const Header = () =>{
         
     }
     const newEmail=(regEmail)
-    const changeEmail=()=>{
+    const changeEmail=async ()=>{
       try{
-        updateEmail(User, newEmail)
-      }catch(error){
-
-      }try{
-        updateDoc(userChangePass,{Email:regEmail})
-      }
-      catch(error){
-
-      }
-      setPassType("password")
+        await updateEmail(CurUser, newEmail)
+        await updateDoc (userChangePass,{Email:regEmail})
+        setPassType("password")
+        setFollowingEth(false)
       setShowPass(false)
       setPassType2("password")
       setShowPass2(false)
@@ -277,14 +313,23 @@ export const Header = () =>{
         setConfirmPass("")
         setConfirmPass2("")
         setError("")
+      }catch(error){
+        console.log(error.message)
+        setEditE(true)
+        if(error.message==("Firebase: Error (auth/email-already-in-use).")){
+          setError("E-mail already in use")
+        }
+      }
         
     }
-    const deleteuser=()=>{
+    const deleteuser=async()=>{
       try{
-      deleteUser(User)
+      await deleteUser(CurUser)
       } catch(error){
 
       }
+      signOut(auth);
+      setFollowingEth(false)
       setPassType("password")
       setShowPass(false)
       setPassType2("password")
@@ -301,8 +346,7 @@ export const Header = () =>{
       setRegPassword("")
       setConfirmPass("")
       setConfirmPass2("")
-      setError("")
-        
+      setError("")  
     };
 
     const validateEmail = (e) => {
@@ -314,21 +358,6 @@ export const Header = () =>{
         setEmailError('Enter valid Email!')
       }
     }
-    // useEffect(()=>{
-    //     const getUsers=async()=>{
-    //       const data = await getDocs(collection(db,"Users"));
-    //       setUserN(data.docs.map((doc)=>({...doc.data().displayName, id: doc.id})))
-  
-    //     }
-    //     getUsers();
-    //    },[]);
-
-    // const usernameChangeHandler=(e)=>{
-    //     setRegUsername(e.target.value)
-    // }
-    // const passwordChangeHandler=(e)=>{
-    //     setRegPassword(e.target.value)
-    // }
 
     const emailChangeHandler=(e)=>{
         setRegEmail(e.target.value)
@@ -371,6 +400,13 @@ export const Header = () =>{
       setLoginEmail("")
       setLoginPassword("")
       setError("")
+      setLoginEmail("")
+      setLoginPassword("")
+      setShowChangePass(false)
+      setRegPassword("")
+      setConfirmPass("")
+      setConfirmPass2("")
+      setError("")
     }
 
   const handleLog=()=>{
@@ -382,11 +418,78 @@ export const Header = () =>{
     setregisClicked(current=>!current)
     console.log(regisClicked)
   }
+  const closeProf=()=>{
+    setShowProfile(false)
+    setPassType("password")
+      setShowPass(false)
+      setPassType2("password")
+      setShowPass2(false)
+      setPassType3("password")
+      setShowPass3(false)
+      setConfirmPass("")
+      setConfirmPass2("")
+      setShowChangePass(false)
+      setEditE(false)
+      setRegPassword("")
+      setEditN(false)
+  }
+  useEffect(()=>{
+    setDocF(current=>!current)
+    setFollowEtherium(current=>!current)
+  },[followingEth])
+  useEffect(()=>{
+    setDocF2(current=>!current)
+    setFollowBNB(current=>!current)
+  },[followingBNB])
+
+  const showfollow=()=>{
+    setShowIntrested(current=>!current)
+    setFollow(current=>!current)
+  }
+  const followEth1=async ()=>{
+    setDocF(current=>!current)
+    setFollowingEth(current=>!current)
+        try{
+     await updateDoc(DocUid,{followedEtherium:followEtherium})}
+     catch(error){
+     console.log(error.message)
+     }
+     if(DocF===true){
+      setFollowEtherium(current=>!current)
+     }
+        }
+        const followBnb=async()=>{
+          setDocF2(current=>!current)
+          setFollowingBNB(current=>!current)
+          try{
+            await updateDoc(DocUid,{followedBNB:followBNB})
+          }catch(error){
+            console.log(error.message)
+          }
+          console.log(DocF2)
+          console.log(followBNB)
+          console.log(followingBNB)
+          if(DocF2===true){
+            setFollowBNB(current=>!current)
+          }
+        }
+    
+//   const followBNB=async()=>{
+//     try{
+//       setFollowBNB(current=>!current)
+//      updateDoc(doc(db,"Users",User.uid),{followedBNB:followBnb})
+//      setFollowingBNB(current=>!current)
+//     }
+// catch(error){
+//   console.log(error.message)
+
+// }
+// }
     return(
         <header style={styles} className={styles.container}>
-            <div><Link to='/'><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link></div>
+            <Link to='/' src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
             {
-            User?
+            CurUser?
             <div 
             style={{border:expand? "solid":null,borderColor:expand? "white":null,borderWidth:expand? "2px":null,
             position:expand?'absolute':'relative',left:expand? '88.3%':null,
@@ -396,11 +499,11 @@ export const Header = () =>{
 
             <div
             onClick={()=>setExpand(!expand)} 
-            className={styles.UserName}>{userN}
-            </div> 
+            className={styles.UserName}>{userN}</div> 
 
             {expand?<ul>
             <button onClick={()=>setShowProfile(current=>!current)}>Profile</button>
+            <button onClick={showfollow}>Intrested</button>
             <button onClick={logout}>signOut</button>
             </ul>:null}
             </div>
@@ -510,6 +613,7 @@ export const Header = () =>{
             </div>:null
            }          
                {showProfile?<div className={styles.editProfile}>
+               <i onClick={closeProf} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
                 {editN?<div className={styles.Name}>
                <label htmlFor="EditUserName">New Username:</label>
                <input 
@@ -542,17 +646,19 @@ export const Header = () =>{
                      value={regEmail}
                      name="E-mail"
                      placeholder='Enter new E-mail'/>
-                     <div style={{marginTop: '15px',display: 'flex',position: 'relative', flexDirection: 'row', justifyContent: 'space-between', width: '92%'}}>
+                     <div style={{flexWrap:'wrap',marginTop: '15px',display: 'flex',position: 'relative', flexDirection: 'row', justifyContent: 'space-between', width: '99%'}}>
                       <button onClick={()=>setEditE(false)}>Cancel</button>
                      {regEmail?
-                     <div style={{marginLeft:'2rem', marginRight:'1rem'}}>
-                     {regEmail==userE?<p style={{margin:'0'}}>E-mail must be different</p>:<button disabled={!(/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(regEmail))} onClick={changeEmail}>Edit E-mail</button>
+                     <div>
+                     {regEmail==userE?<span style={{marginRight:'2rem'}}>E-mail must be new</span>
+                     :<span style={{marginRight:'4rem'}} ><button style={{float:'none'}} disabled={!(/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(regEmail))} onClick={changeEmail}>Edit E-mail
+                     </button></span>
                      }
+                     <span style={{color:'green'}}>{emailError}</span>
                      </div>
                      :<span style={{marginLeft: '40px',marginRight: '19px'}}>You need to fill new E-mail</span>
                      }
-
-                     <span style={{color:'green'}}>{emailError}</span>
+                     <span style={{margin:'auto',marginTop:'0.5rem', color:'red'}}>{ErrorM}</span>
                </div>
                 </div>:
                 <div className={styles.Email}>
@@ -561,6 +667,30 @@ export const Header = () =>{
                <button style={{margin:'auto'}} onClick={handleEditE}>Edit E-mail</button>
                </div>
                 }
+                <div className='interested'>
+                  <button onClick={showfollow} style={{margin:'auto'}}>Intrest</button>
+                  {follow?
+                  <ul type="none">
+                  <li onClick={followEth1} style={{gap:'77px', cursor:'pointer'}}>
+            <div style={{position:'relative', width:'18px', height:'18px',border:'2px solid black',right:'1px', backgroundColor: followingEth ===true? 'blue':''}}>
+            {
+              followingEth===true?<i style={{color:'white', position:'relative',bottom:'4px',fontSize:'20px'}} className='fa-solid fa-check'/>:null
+            }
+            </div>
+             Follow Etherium
+                </li>
+
+                <li  style={{gap:'77px', cursor:'pointer'}} onClick={followBnb}>
+            <div style={{position:'relative', width:'18px', height:'18px',border:'2px solid black',right:'1px', backgroundColor: followingBNB ==true? 'blue':''}}>
+            {
+              followingBNB==true?<i style={{color:'white', position:'relative',bottom:'4px',fontSize:'20px'}} className='fa-solid fa-check'/>:null
+            }
+            </div>
+             Follow BNB
+                </li>                   
+                 <li></li>
+                  </ul>:null}
+                </div>
                  <div className={styles.change}>
                   <button onClick={showchangePass}>Change password</button>
                   <button onClick={()=>setShowDel(current=>!current)} style={{color:'red'}} >Delete profile</button>
