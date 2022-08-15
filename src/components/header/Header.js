@@ -5,12 +5,13 @@ import {setDoc, doc, getDoc, deleteDoc, updateDoc, addDoc} from 'firebase/firest
 import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail} from 'firebase/auth'
 import validator from 'validator'
 import { async } from '@firebase/util';
-import { Link} from 'react-router-dom';
+import { Routes,Route,Link} from 'react-router-dom';
 
 export const Header = () =>{
 
    const[DocF,setDocF]=useState(Boolean)
    const[DocF2,setDocF2]=useState(Boolean)
+   const[DocF3,setDocF3]=useState(Boolean)
    const[DocUid,setDocUid]=useState('')
    const[DocUid2, setDocUid2]=useState('')
     const[regUsername,setRegUsername]=useState('')
@@ -30,6 +31,10 @@ export const Header = () =>{
     const[followBNB,setFollowBNB]=useState(Boolean)
 
     const[followingBNB,setFollowingBNB]=useState(Boolean)
+
+    const[followBTC,setFollowBTC]=useState(Boolean)
+
+    const[followingBTC,setFollowingBTC]=useState(Boolean)
 
     const[userChangePass,setUserChangePass]=useState('')
 
@@ -87,7 +92,7 @@ export const Header = () =>{
       setregisClicked(current=>!current)
         try{
        const user = await createUserWithEmailAndPassword(auth, regEmail, regPassword)
-       await setDoc(doc(db, "Users",user.user.uid ), {displayName: regUsername, Email: regEmail, Password: regPassword, followedEtherium:false,followedBNB:false})
+       await setDoc(doc(db, "Users",user.user.uid ), {displayName: regUsername, Email: regEmail, Password: regPassword, followedEtherium:false,followedBNB:false, followedBtc:false})
        const docRef=(doc(db,"Users",user.user.uid))
        const docRefP=doc(db,"Users",user.user.uid)
        const docRefF=doc(db,"Users",user.user.uid)
@@ -95,6 +100,7 @@ export const Header = () =>{
        const docName= await getDoc(docRef)
        const docE= await getDoc(docRefE)
        setDocF2(docName.data().followedBNB)
+       setDocF3(docName.data().followedBtc)
        setDocF(docName.data().followedEtherium)
        setDocUid(docRefF)
        setUserChangePass(docRefP)
@@ -133,10 +139,12 @@ export const Header = () =>{
             const docE= await getDoc(docRefE)
             // setDocUid2(docRefF)
             setDocUid(docRefF)
+            setDocF3(docName.data().followedBtc)
             setDocF2(docName.data().followedBNB)
             setDocF(docName.data().followedEtherium)
             setFollowingBNB(docE.data().followedBNB)
             setFollowingEth(docE.data().followedEtherium)
+            setFollowingBTC(docE.data().followedBtc)
             setDelUser(docRef)
             setUserE(docName.data().Email)
             setUserN(docName.data().displayName)
@@ -437,10 +445,16 @@ export const Header = () =>{
     setDocF(current=>!current)
     setFollowEtherium(current=>!current)
   },[followingEth])
+
   useEffect(()=>{
     setDocF2(current=>!current)
     setFollowBNB(current=>!current)
   },[followingBNB])
+  
+  useEffect(()=>{
+    setDocF3(current=>!current)
+    setFollowBTC(current=>!current)
+  },[followingBTC])
 
   const showfollow=()=>{
     setShowIntrested(current=>!current)
@@ -466,14 +480,53 @@ export const Header = () =>{
           }catch(error){
             console.log(error.message)
           }
-          console.log(DocF2)
-          console.log(followBNB)
-          console.log(followingBNB)
           if(DocF2===true){
             setFollowBNB(current=>!current)
           }
         }
-    
+
+        const followBtc=async()=>{
+        setDocF3(current=>!current)
+        setFollowingBTC(current=>!current)
+        try{
+          await updateDoc(DocUid,{followedBtc:followBTC})
+        }catch(error){
+
+        }
+        console.log(DocF3)
+          console.log(followBTC)
+          console.log(followingBTC)
+        if(DocF3===true){
+          setFollowBTC(current=>!current)
+        }
+        }
+     function Follow(){
+      const round =(number)=>{
+        return number ? +number.toFixed(2):null
+      }
+
+      const[EthP1,setEthP1]=useState([])
+      const[EthP2,setEthP2]=useState({})
+      const url=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
+     useEffect(()=>{
+      fetch(url)
+              .then((res) =>res.json()
+              )
+              .then((data)=>{
+                console.log(data.chart);
+                setEthP1([[data.chart.result[0].indicators.quote[0].close[0]].map(round)])
+                // const quote=data.chart.result[0].indicators.quote.map((index)=>
+                // ({
+                //   y:[Price1.open[index],Price1.high[index],Price1.low[index],Price1.close[index]].map(round)}))
+                console.log(EthP1)
+              })
+     },[])
+      return(
+      <div className={styles.followWrapper}>
+      <p>{EthP1}</p>
+      </div>
+     )
+    }
 //   const followBNB=async()=>{
 //     try{
 //       setFollowBNB(current=>!current)
@@ -503,7 +556,8 @@ export const Header = () =>{
 
             {expand?<ul>
             <button onClick={()=>setShowProfile(current=>!current)}>Profile</button>
-            <button onClick={showfollow}>Intrested</button>
+            {/* <button onClick={showfollow}>Intrested</button> */}
+            <Link to="/follow">Intrested</Link>
             <button onClick={logout}>signOut</button>
             </ul>:null}
             </div>
@@ -688,7 +742,14 @@ export const Header = () =>{
             </div>
              Follow BNB
                 </li>                   
-                 <li></li>
+                <li  style={{gap:'77px', cursor:'pointer'}} onClick={followBtc}>
+            <div style={{position:'relative', width:'18px', height:'18px',border:'2px solid black',right:'1px', backgroundColor: followingBTC ==true? 'blue':''}}>
+            {
+              followingBTC==true?<i style={{color:'white', position:'relative',bottom:'4px',fontSize:'20px'}} className='fa-solid fa-check'/>:null
+            }
+            </div>
+             Follow BTC
+                </li>   
                   </ul>:null}
                 </div>
                  <div className={styles.change}>
@@ -767,5 +828,8 @@ export const Header = () =>{
                     :<div><p>Incorrect Password</p></div>}
                  </div>:null}
           </div>:null}
+          <Routes>
+              <Route path="/follow" element={<Follow/>}></Route>
+            </Routes>
        </header>
       )}
