@@ -1,5 +1,5 @@
 import styles from './header.module.css'
-import {useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import { db, auth } from '../../firebase';
 import {setDoc, doc, getDoc, deleteDoc, updateDoc, addDoc} from 'firebase/firestore'
 import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail} from 'firebase/auth'
@@ -221,7 +221,6 @@ export const Header = () =>{
 
     const logout=async()=>{
       await signOut(auth);
-      setFollowingEth(false)
       setPassType("password")
       setShowPass(false)
       setPassType2("password")
@@ -252,7 +251,6 @@ export const Header = () =>{
       }catch(error){
 
       }
-      setFollowingEth(false)
       setPassType("password")
       setShowPass(false)
       setPassType2("password")
@@ -277,7 +275,6 @@ export const Header = () =>{
       } catch(error){
 
       }
-      setFollowingEth(false)
       setPassType("password")
       setShowPass(false)
       setPassType2("password")
@@ -304,7 +301,6 @@ export const Header = () =>{
         await updateEmail(CurUser, newEmail)
         await updateDoc (userChangePass,{Email:regEmail})
         setPassType("password")
-        setFollowingEth(false)
       setShowPass(false)
       setPassType2("password")
       setShowPass2(false)
@@ -504,12 +500,25 @@ export const Header = () =>{
       const round =(number)=>{
         return number ? +number.toFixed(2):null
       }
+      // const multiply=(number)=>{
+      //   return number? +number *1000
+      // }
 
       const[EthP1,setEthP1]=useState([])
-      const[EthP2,setEthP2]=useState({})
-      const url=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
-     useEffect(()=>{
-      fetch(url)
+      const[EthP2,setEthP2]=useState([])
+      const[EthChange,setEthChange]=useState(Number)
+      const urlEth1=`/v8/finance/chart/ETH-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
+      const urlEth2='https://price-api.crypto.com/price/v1/exchange/ethereum'
+        useEffect(()=>{
+          setEthChange(((EthP2-EthP1)-EthP1)*100)
+          console.log(EthChange)
+          return()=>{<span>{EthChange}</span>}
+        },[])
+      const now = new Date();
+
+        const oneWeek= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+      useEffect(()=>{
+      fetch(urlEth1)
               .then((res) =>res.json()
               )
               .then((data)=>{
@@ -518,12 +527,36 @@ export const Header = () =>{
                 // const quote=data.chart.result[0].indicators.quote.map((index)=>
                 // ({
                 //   y:[Price1.open[index],Price1.high[index],Price1.low[index],Price1.close[index]].map(round)}))
-                console.log(EthP1)
+                console.log(typeof EthP1)
+                console.log(oneWeek)
+                // console.log(procent)
+
               })
      },[])
+     useEffect(() => 
+     {
+         {
+             fetch(urlEth2)
+             .then((res) =>res.json()
+             )
+               .then((data) => 
+               {
+                 // console.log(data);
+                 setEthP2((data.fiat.usd).toFixed(2));
+                 // setSymbol(data[0].symbol); 
+               }
+              )
+     
+          .catch((error) => {
+             console.log(error);
+           });
+         }
+     }, []);
       return(
       <div className={styles.followWrapper}>
-      <p>{EthP1}</p>
+        {followingEth?<div><h2>Etherium</h2>
+      <span>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. The price has risen with {(((EthP2-EthP1)/EthP1)*100)}</span></div>:null}
+      <span></span>
       </div>
      )
     }
