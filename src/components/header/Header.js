@@ -1,8 +1,8 @@
 import styles from './header.module.css'
 import {useEffect, useState} from 'react';
-import { db, auth } from '../../firebase';
+import { db, auth} from '../../firebase';
 import {setDoc, doc, getDoc, deleteDoc, updateDoc, addDoc} from 'firebase/firestore'
-import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail} from 'firebase/auth'
+import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail,sendPasswordResetEmail} from 'firebase/auth'
 import validator from 'validator'
 import { async } from '@firebase/util';
 import { Routes,Route,Link} from 'react-router-dom';
@@ -64,6 +64,8 @@ export const Header = () =>{
 
     const [logisClicked,setlogisClicked]=useState(false);
 
+    const [forgot,setForgot]=useState(false)
+
    const [regisClicked,setregisClicked]=useState(false);
 
   const [ErrorM, setError]=useState('')
@@ -102,6 +104,9 @@ export const Header = () =>{
        setDocF2(docName.data().followedBNB)
        setDocF3(docName.data().followedBtc)
        setDocF(docName.data().followedEtherium)
+       setFollowingBNB(docE.data().followedBNB)
+       setFollowingEth(docE.data().followedEtherium)
+       setFollowingBTC(docE.data().followedBtc)
        setDocUid(docRefF)
        setUserChangePass(docRefP)
        setDelUser(docRef)
@@ -123,6 +128,36 @@ export const Header = () =>{
          })
          setShowPass(false)
    }
+
+
+    const ForgotPass=async()=>
+    {
+      setlogisClicked(false)
+      setForgot(true)
+    }
+
+    const SendEmail=async()=>{
+      try{
+        await sendPasswordResetEmail(auth, loginEmail)
+   .then(() =>
+       {
+        setForgot(false)
+        setlogisClicked(true)
+        setError('')
+       }
+       ).catch((error)=>
+       {
+     console.log(error.message)
+     if(error.message==("Firebase: Error (auth/user-not-found).")){
+      setError("Wrong user E-mail")}
+      else if(error.message==("Firebase: Error (auth/invalid-email).")){
+        setError("Invalid E-mail")
+      }
+      })
+    }catch(error){
+      console.log(error.message) 
+  }
+}
     const login= async ()=>{
         try{
             const user= await signInWithEmailAndPassword(
@@ -174,19 +209,10 @@ export const Header = () =>{
         }
         }
         onAuthStateChanged(auth, (currentUser) => {
-          // if(DocF===false){
-          //   setFollowEtherium(prevFollowEtherium=>!prevFollowEtherium)
-          //   setDocF(prevsetDocF=>!prevsetDocF)
-          // }
-          // else if(DocF===true){
-          //   setFollowEtherium(prevFollowEtherium=>!prevFollowEtherium)
-          //   setDocF(prevsetDocF=>!prevsetDocF)
-          // }
             setUser(currentUser);
           })
           console.log(DocUid2)
     }
-
      const togglePassword=()=>{
     setShowPass(current=>!current)
     if(showPass){
@@ -199,6 +225,7 @@ export const Header = () =>{
     console.log(passType)
      }
 
+     
      const togglePassword2=()=>{
       setShowPass2(current=>!current)
       if(showPass2){
@@ -217,8 +244,7 @@ export const Header = () =>{
         setPassType3("text")
       }
      }
-
-
+     
     const logout=async()=>{
       await signOut(auth);
       setPassType("password")
@@ -414,12 +440,16 @@ export const Header = () =>{
     }
 
   const handleLog=()=>{
+    setForgot(false)
     setlogisClicked(current=>!current)
     setregisClicked(false)
+    setError('')
   }
   const handleReg=()=>{
+    setForgot(false)
     setlogisClicked(false)
     setregisClicked(current=>!current)
+    setError('')
     console.log(regisClicked)
   }
   const closeProf=()=>{
@@ -506,31 +536,53 @@ export const Header = () =>{
 
       const[EthP1,setEthP1]=useState([])
       const[EthP2,setEthP2]=useState([])
-      const[EthChange,setEthChange]=useState(Number)
-      const urlEth1=`/v8/finance/chart/ETH-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
+      const[BNBP1,setBNBP1]=useState([])
+      const[BNBP2,setBNBP2]=useState([])
+      const[BtcP1,setBtcP1]=useState([])
+      const[BtcP2,setBtcP2]=useState([])
+      const urlEth1=`/v8/finance/chart/ETH-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
       const urlEth2='https://price-api.crypto.com/price/v1/exchange/ethereum'
-        useEffect(()=>{
-          setEthChange(((EthP2-EthP1)-EthP1)*100)
-          console.log(EthChange)
-          return()=>{<span>{EthChange}</span>}
-        },[])
-      const now = new Date();
+      const urlBNB1=`/v8/finance/chart/BNB-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
+      const urlBNB2='https://price-api.crypto.com/price/v1/exchange/bnb'
+      const urlBtc1=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
+      const urlBtc2='https://price-api.crypto.com/price/v1/exchange/bitcoin'
+      
+      
+      function EthChange(){  
+          if(EthP2>EthP1){
+            return<span style={{color:'green'}}>{(((EthP2-EthP1)/EthP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span>
+          }else if(EthP1>EthP2){
+            return<span style={{color:'red'}}>{(((EthP1-EthP2)/EthP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span>
+          }
+        
+      }
+      function BNBChange(){  
+        if(BNBP2>BNBP1){
+          return<span style={{color:'green'}}>{(((BNBP2-BNBP1)/BNBP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span>
+        }else if(BNBP1>BNBP2){
+          return<span style={{color:'red'}}>{(((BNBP1-BNBP2)/BNBP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span>
+        }
+      
+    }
 
-        const oneWeek= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+    function BtcChange(){  
+      if(BtcP2>BtcP1){
+        return<span style={{color:'green'}}>{(((BtcP2-BtcP1)/BtcP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span>
+      }else if(BtcP1>BtcP2){
+        return<span style={{color:'red'}}>{(((BtcP1-BtcP2)/BtcP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span>
+      }
+    
+  }
+
+      const now = new Date()
+
+        const oneWeek= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)
       useEffect(()=>{
       fetch(urlEth1)
               .then((res) =>res.json()
               )
               .then((data)=>{
-                console.log(data.chart);
                 setEthP1([[data.chart.result[0].indicators.quote[0].close[0]].map(round)])
-                // const quote=data.chart.result[0].indicators.quote.map((index)=>
-                // ({
-                //   y:[Price1.open[index],Price1.high[index],Price1.low[index],Price1.close[index]].map(round)}))
-                console.log(typeof EthP1)
-                console.log(oneWeek)
-                // console.log(procent)
-
               })
      },[])
      useEffect(() => 
@@ -541,39 +593,91 @@ export const Header = () =>{
              )
                .then((data) => 
                {
-                 // console.log(data);
-                 setEthP2((data.fiat.usd).toFixed(2));
-                 // setSymbol(data[0].symbol); 
+                 setEthP2((data.fiat.usd).toFixed(2))
                }
               )
      
           .catch((error) => {
-             console.log(error);
-           });
+             console.log(error)
+           })
          }
-     }, []);
+     }, [])
+
+     useEffect(()=>{
+      fetch(urlBNB1)
+              .then((res) =>res.json()
+              )
+              .then((data)=>{
+                setBNBP1([[data.chart.result[0].indicators.quote[0].close[0]].map(round)])
+              })
+     },[])
+
+     useEffect(() => 
+     {
+         {
+             fetch(urlBNB2)
+             .then((res) =>res.json()
+             )
+               .then((data) => 
+               {
+                 setBNBP2((data.fiat.usd).toFixed(2))
+               }
+              )
+     
+          .catch((error) => {
+             console.log(error)
+           })
+         }
+     }, [])
+
+     useEffect(()=>{
+      fetch(urlBtc1)
+              .then((res) =>res.json()
+              )
+              .then((data)=>{
+                setBtcP1([[data.chart.result[0].indicators.quote[0].close[0]].map(round)])
+              })
+     },[])
+
+     useEffect(() => 
+     {
+         {
+             fetch(urlBtc2)
+             .then((res) =>res.json()
+             )
+               .then((data) => 
+               {
+                 setBtcP2((data.fiat.usd).toFixed(2))
+               }
+              )
+     
+          .catch((error) => {
+             console.log(error)
+           })
+         }
+     }, [])
+
       return(
       <div className={styles.followWrapper}>
+        <div style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to='/'><i className="fa-solid fa-x"></i></Link></div>
+       <div className={styles.followEth}> 
         {followingEth?<div><h2>Etherium</h2>
-      <span>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. The price has risen with {(((EthP2-EthP1)/EthP1)*100)}</span></div>:null}
-      <span></span>
+      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. The price has risen with {<EthChange/>}</span></div>:null}
       </div>
+      <div className={styles.followEth}>
+      {followingBNB?<div><h2>BNB</h2>
+      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BNBP1} and has gone to: {"$" + BNBP2}. The price has risen with {<BNBChange/>}</span></div>:null}
+      </div>
+      <div className={styles.followEth}>
+      {followingBTC?<div><h2>Btc</h2>
+      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BtcP1} and has gone to: {"$" + BtcP2}. The price has risen with {<BtcChange/>}</span></div>:null}
+      </div>
+      </div> 
      )
     }
-//   const followBNB=async()=>{
-//     try{
-//       setFollowBNB(current=>!current)
-//      updateDoc(doc(db,"Users",User.uid),{followedBNB:followBnb})
-//      setFollowingBNB(current=>!current)
-//     }
-// catch(error){
-//   console.log(error.message)
-
-// }
-// }
     return(
         <header style={styles} className={styles.container}>
-            <Link to='/' src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
+            <Link  to='/' src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
             {
             CurUser?
             <div 
@@ -590,8 +694,8 @@ export const Header = () =>{
             {expand?<ul>
             <button onClick={()=>setShowProfile(current=>!current)}>Profile</button>
             {/* <button onClick={showfollow}>Intrested</button> */}
-            <Link to="/follow">Intrested</Link>
-            <button onClick={logout}>signOut</button>
+            <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}} onClick={closeProf} to="/follow">Intrested</Link>
+            <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}}  onClick={logout} to='/'>signOut</Link>
             </ul>:null}
             </div>
             :
@@ -694,11 +798,26 @@ export const Header = () =>{
                 </div>
                 </div>
                 <div>
-                  <p>{ErrorM}</p>
+                  {ErrorM?<p style={{margin:'0'}}>{ErrorM}</p>:null}
+                  <button onClick={ForgotPass}>Forgot Password</button>
                    {loginPassword?<button onClick={login}>LogIn</button>:<p style={{color:'red', margin:'auto', fontSize:'20px'}}>Password must be filled</p>}
                   </div>
             </div>:null
-           }          
+           }
+           {forgot?<div className={styles.Forgot}>
+           <div>
+                <label htmlFor="email">Email:</label>
+                  <input 
+                   id="email" 
+                   type="email" 
+                   onChange={e=>setLoginEmail(e.target.value)} 
+                   value={loginEmail} 
+                   name="email"
+                   />
+                </div>
+                {ErrorM?<p>{ErrorM}</p>:null}
+                <button onClick={SendEmail}>Send E-mail</button>
+           </div>:null}          
                {showProfile?<div className={styles.editProfile}>
                <i onClick={closeProf} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
                 {editN?<div className={styles.Name}>
