@@ -1,7 +1,7 @@
 import styles from './header.module.css'
 import {useEffect, useState} from 'react';
 import { db, auth} from '../../firebase';
-import {setDoc, doc, getDoc, deleteDoc, updateDoc, addDoc} from 'firebase/firestore'
+import {setDoc, doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore'
 import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail,sendPasswordResetEmail} from 'firebase/auth'
 import validator from 'validator'
 import { async } from '@firebase/util';
@@ -13,7 +13,6 @@ export const Header = () =>{
    const[DocF2,setDocF2]=useState(Boolean)
    const[DocF3,setDocF3]=useState(Boolean)
    const[DocUid,setDocUid]=useState('')
-   const[DocUid2, setDocUid2]=useState('')
     const[regUsername,setRegUsername]=useState('')
 
     const [emailError, setEmailError] = useState('')
@@ -148,9 +147,9 @@ export const Header = () =>{
        ).catch((error)=>
        {
      console.log(error.message)
-     if(error.message==("Firebase: Error (auth/user-not-found).")){
+     if(error.message===("Firebase: Error (auth/user-not-found).")){
       setError("Wrong user E-mail")}
-      else if(error.message==("Firebase: Error (auth/invalid-email).")){
+      else if(error.message===("Firebase: Error (auth/invalid-email).")){
         setError("Invalid E-mail")
       }
       })
@@ -169,7 +168,6 @@ export const Header = () =>{
             const docRefE=((doc(db,"Users",user.user.uid)))
             const docRefP=doc(db,"Users",user.user.uid)
             const docRefF=(doc(db,"Users",user.user.uid))
-            const docTest= await getDoc(docRefF)
             const docName = await getDoc(docRef)
             const docE= await getDoc(docRefE)
             // setDocUid2(docRefF)
@@ -195,13 +193,13 @@ export const Header = () =>{
         } catch (error){
           console.log(error.message)
         setlogisClicked(true)
-        if(error.message==("Firebase: Error (auth/wrong-password).")){
+        if(error.message===("Firebase: Error (auth/wrong-password).")){
           setError("Wrong Password")
         }
-        else if(error.message==("Firebase: Error (auth/invalid-email).")){
+        else if(error.message===("Firebase: Error (auth/invalid-email).")){
           setError("Invalid E-mail")
         } 
-        else if(error.message==("Firebase: Error (auth/user-not-found).")){
+        else if(error.message===("Firebase: Error (auth/user-not-found).")){
           setError("Wrong user E-mail")
         }
         else{
@@ -211,7 +209,6 @@ export const Header = () =>{
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
           })
-          console.log(DocUid2)
     }
      const togglePassword=()=>{
     setShowPass(current=>!current)
@@ -346,7 +343,7 @@ export const Header = () =>{
       }catch(error){
         console.log(error.message)
         setEditE(true)
-        if(error.message==("Firebase: Error (auth/email-already-in-use).")){
+        if(error.message===("Firebase: Error (auth/email-already-in-use).")){
           setError("E-mail already in use")
         }
       }
@@ -494,7 +491,7 @@ export const Header = () =>{
      catch(error){
      console.log(error.message)
      }
-     if(DocF===true){
+     if(DocF==true){
       setFollowEtherium(current=>!current)
      }
         }
@@ -506,7 +503,7 @@ export const Header = () =>{
           }catch(error){
             console.log(error.message)
           }
-          if(DocF2===true){
+          if(DocF2==true){
             setFollowBNB(current=>!current)
           }
         }
@@ -522,7 +519,7 @@ export const Header = () =>{
         console.log(DocF3)
           console.log(followBTC)
           console.log(followingBTC)
-        if(DocF3===true){
+        if(DocF3==true){
           setFollowBTC(current=>!current)
         }
         }
@@ -659,7 +656,7 @@ export const Header = () =>{
 
       return(
       <div className={styles.followWrapper}>
-        <div style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to='/'><i className="fa-solid fa-x"></i></Link></div>
+        <div style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to="/"><i className="fa-solid fa-x"></i></Link></div>
        <div className={styles.followEth}> 
         {followingEth?<div><h2>Etherium</h2>
       <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. The price has risen with {<EthChange/>}</span></div>:null}
@@ -677,7 +674,7 @@ export const Header = () =>{
     }
     return(
         <header style={styles} className={styles.container}>
-            <Link  to='/' src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
+            <Link  to="/" src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
             {
             CurUser?
             <div 
@@ -695,7 +692,7 @@ export const Header = () =>{
             <button onClick={()=>setShowProfile(current=>!current)}>Profile</button>
             {/* <button onClick={showfollow}>Intrested</button> */}
             <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}} onClick={closeProf} to="/follow">Intrested</Link>
-            <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}}  onClick={logout} to='/'>signOut</Link>
+            <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}}  onClick={logout} to="/">signOut</Link>
             </ul>:null}
             </div>
             :
@@ -755,11 +752,11 @@ export const Header = () =>{
                         </div>
                         {
                         confirmPass?<div>{confirmPass!==regPassword? <p style={{color:'red', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords do not match</p>:null}
-                        {confirmPass==regPassword? <p style={{color:'green', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords Match</p>:null}</div>:null
+                        {confirmPass===regPassword? <p style={{color:'green', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords Match</p>:null}</div>:null
                         }
                     </div>
                     <p onClick={handleLog} style={{margin:'0',color:'blue',cursor:'pointer'}}>Already have an account</p>
-                    {confirmPass==regPassword?<div>
+                    {confirmPass===regPassword?<div>
                         <button style={{color:'white', backgroundColor:'transparent', border:'none'}} onClick={register}>Register</button>
                     </div>:
                     <div><button>Register</button></div>}
@@ -856,7 +853,7 @@ export const Header = () =>{
                       <button onClick={()=>setEditE(false)}>Cancel</button>
                      {regEmail?
                      <div>
-                     {regEmail==userE?<span style={{marginRight:'2rem'}}>E-mail must be new</span>
+                     {regEmail===userE?<span style={{marginRight:'2rem'}}>E-mail must be new</span>
                      :<span style={{marginRight:'4rem'}} ><button style={{float:'none'}} disabled={!(/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(regEmail))} onClick={changeEmail}>Edit E-mail
                      </button></span>
                      }
@@ -887,17 +884,17 @@ export const Header = () =>{
                 </li>
 
                 <li  style={{gap:'77px', cursor:'pointer'}} onClick={followBnb}>
-            <div style={{position:'relative', width:'18px', height:'18px',border:'2px solid black',right:'1px', backgroundColor: followingBNB ==true? 'blue':''}}>
+            <div style={{position:'relative', width:'18px', height:'18px',border:'2px solid black',right:'1px', backgroundColor: followingBNB ===true? 'blue':''}}>
             {
-              followingBNB==true?<i style={{color:'white', position:'relative',bottom:'4px',fontSize:'20px'}} className='fa-solid fa-check'/>:null
+              followingBNB===true?<i style={{color:'white', position:'relative',bottom:'4px',fontSize:'20px'}} className='fa-solid fa-check'/>:null
             }
             </div>
              Follow BNB
                 </li>                   
                 <li  style={{gap:'77px', cursor:'pointer'}} onClick={followBtc}>
-            <div style={{position:'relative', width:'18px', height:'18px',border:'2px solid black',right:'1px', backgroundColor: followingBTC ==true? 'blue':''}}>
+            <div style={{position:'relative', width:'18px', height:'18px',border:'2px solid black',right:'1px', backgroundColor: followingBTC ===true? 'blue':''}}>
             {
-              followingBTC==true?<i style={{color:'white', position:'relative',bottom:'4px',fontSize:'20px'}} className='fa-solid fa-check'/>:null
+              followingBTC===true?<i style={{color:'white', position:'relative',bottom:'4px',fontSize:'20px'}} className='fa-solid fa-check'/>:null
             }
             </div>
              Follow BTC
@@ -970,13 +967,13 @@ export const Header = () =>{
                       </div>
                         {
                         confirmPass2?<div>{confirmPass2!==regPassword? <p style={{color:'red', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords do not match</p>:null}
-                        {regPassword && confirmPass2==regPassword? <p style={{color:'green', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords Match</p>:null}</div>:null
+                        {regPassword && confirmPass2===regPassword? <p style={{color:'green', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords Match</p>:null}</div>:null
                         }
                     </div>
-                    {confirmPass==userP?
+                    {confirmPass===userP?
                     <div>
                     {confirmPass2?
-                    <div>{confirmPass2==regPassword? <p style={{cursor:'pointer'}} onClick={changePass}>Change password</p>:<p>You can't change password</p>}</div>:<p>Must fill all fields</p>} </div>
+                    <div>{confirmPass2===regPassword? <p style={{cursor:'pointer'}} onClick={changePass}>Change password</p>:<p>You can't change password</p>}</div>:<p>Must fill all fields</p>} </div>
                     :<div><p>Incorrect Password</p></div>}
                  </div>:null}
           </div>:null}
