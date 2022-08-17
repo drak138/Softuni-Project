@@ -12,7 +12,6 @@ export const BitCoinChart =()=>{
       data:[]
       }]
       )
-    const proxy="https://cors-anywhere.herokuapp.com/"
     const url=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
     useEffect(() => 
       {
@@ -97,7 +96,6 @@ export const EthChart =()=>{
       [{
       data: []
     }])
-    const proxy="https://cors-anywhere.herokuapp.com/"
     const url=`/v8/finance/chart/ETH-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
     useEffect(() => 
       {
@@ -177,7 +175,6 @@ export const EthChart =()=>{
       [{
       data: []
     }])
-    const proxy="https://cors-anywhere.herokuapp.com/"
     const url=`/v8/finance/chart/BNB-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
     useEffect(() => 
       {
