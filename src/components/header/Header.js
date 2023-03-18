@@ -654,9 +654,11 @@ export const Header = () =>{
          }
      }, [])
 
-      return(
+return(
       <div className={styles.followWrapper}>
         <div style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to="/"><i className="fa-solid fa-x"></i></Link></div>
+        {followingBNB||followingBTC||followingEth?
+        <div>
        <div className={styles.followEth}> 
         {followingEth?<div><h2>Etherium</h2>
       <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. The price has risen with {<EthChange/>}</span></div>:null}
@@ -669,9 +671,10 @@ export const Header = () =>{
       {followingBTC?<div><h2>Btc</h2>
       <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BtcP1} and has gone to: {"$" + BtcP2}. The price has risen with {<BtcChange/>}</span></div>:null}
       </div>
+      </div>:<h2>You have to follow a currency. You can do this by going to profile then in Intrests</h2>}
       </div> 
      )
-    }
+}
     return(
         <header style={styles} className={styles.container}>
             <Link  to="/" src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
