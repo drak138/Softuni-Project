@@ -174,7 +174,7 @@ export const BNBPrice = () => {
     
     <div className={style.bnb}>
      <div className={style.nameWrapper}>  
-       <img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880" alt="" />
+       <img src="https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1644979850" alt="" />
        <p className={style.name}>
         BNB
        </p>
