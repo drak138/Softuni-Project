@@ -164,6 +164,16 @@ export const Header = () =>{
                 loginEmail,
                 loginPassword
             )
+            try{
+              updatePassword(CurUser,loginPassword)
+            } catch(error){
+      
+            }
+            try{
+              updateDoc(userChangePass,{Password:loginPassword})
+            }catch(error){
+      
+            }
             const docRef=(doc(db,"Users",user.user.uid))
             const docRefE=((doc(db,"Users",user.user.uid)))
             const docRefP=doc(db,"Users",user.user.uid)
@@ -184,6 +194,7 @@ export const Header = () =>{
             setUserP(docName.data().Password)
             setUserChangePass(docRefP)
             setlogisClicked(false)
+            setShowPass(false)
             setPassType("password")
             setPassType2("password")
             setShowPass2(false)
@@ -654,7 +665,7 @@ export const Header = () =>{
          }
      }, [])
 
-return(
+      return(
       <div className={styles.followWrapper}>
         <div style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to="/"><i className="fa-solid fa-x"></i></Link></div>
         {followingBNB||followingBTC||followingEth?
@@ -674,7 +685,7 @@ return(
       </div>:<h2>You have to follow a currency. You can do this by going to profile then in Intrests</h2>}
       </div> 
      )
-}
+    }
     return(
         <header style={styles} className={styles.container}>
             <Link  to="/" src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
@@ -874,7 +885,7 @@ return(
                </div>
                 }
                 <div className='interested'>
-                  <button onClick={showfollow} style={{margin:'auto'}}>Intrest</button>
+                  <button onClick={showfollow} style={{margin:'auto'}}>Intrests</button>
                   {follow?
                   <ul type="none">
                   <li onClick={followEth1} style={{gap:'77px', cursor:'pointer'}}>
@@ -973,7 +984,7 @@ return(
                         {regPassword && confirmPass2===regPassword? <p style={{color:'green', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords Match</p>:null}</div>:null
                         }
                     </div>
-                    {confirmPass===userP?
+                    {loginPassword && confirmPass==loginPassword || confirmPass==userP?
                     <div>
                     {confirmPass2?
                     <div>{confirmPass2===regPassword? <p style={{cursor:'pointer'}} onClick={changePass}>Change password</p>:<p>You can't change password</p>}</div>:<p>Must fill all fields</p>} </div>
