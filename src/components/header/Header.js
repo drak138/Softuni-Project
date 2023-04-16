@@ -9,9 +9,6 @@ import { Routes,Route,Link} from 'react-router-dom';
 
 export const Header = () =>{
 
-   const[DocF,setDocF]=useState(Boolean)
-   const[DocF2,setDocF2]=useState(Boolean)
-   const[DocF3,setDocF3]=useState(Boolean)
    const[DocUid,setDocUid]=useState('')
     const[regUsername,setRegUsername]=useState('')
 
@@ -19,23 +16,23 @@ export const Header = () =>{
 
     const[userP,setUserP]=useState('')
 
-    const[showIntrested,setShowIntrested]=useState(false)
+
 
     const[follow,setFollow]=useState(false)
 
-    const[followEtherium,setFollowEtherium]=useState(Boolean)
+
 
     const[followingEth,setFollowingEth]=useState(Boolean)
 
-    const[followBNB,setFollowBNB]=useState(Boolean)
+
 
     const[followingBNB,setFollowingBNB]=useState(Boolean)
 
-    const[followBTC,setFollowBTC]=useState(Boolean)
+
 
     const[followingBTC,setFollowingBTC]=useState(Boolean)
 
-    const[userChangePass,setUserChangePass]=useState('')
+    const[userEdit,setUserEdit]=useState('')
 
     const[confirmPass2,setConfirmPass2]=useState('')
 
@@ -89,28 +86,22 @@ export const Header = () =>{
   const [editE, setEditE]=useState(false)
 
   
+  
      const register= async ()=>{
       setregisClicked(current=>!current)
         try{
        const user = await createUserWithEmailAndPassword(auth, regEmail, regPassword)
        await setDoc(doc(db, "Users",user.user.uid ), {displayName: regUsername, Email: regEmail, Password: regPassword, followedEtherium:false,followedBNB:false, followedBtc:false})
        const docRef=(doc(db,"Users",user.user.uid))
-       const docRefP=doc(db,"Users",user.user.uid)
-       const docRefF=doc(db,"Users",user.user.uid)
-       const docRefE=((doc(db,"Users",user.user.uid)))
        const docName= await getDoc(docRef)
-       const docE= await getDoc(docRefE)
-       setDocF2(docName.data().followedBNB)
-       setDocF3(docName.data().followedBtc)
-       setDocF(docName.data().followedEtherium)
-       setFollowingBNB(docE.data().followedBNB)
-       setFollowingEth(docE.data().followedEtherium)
-       setFollowingBTC(docE.data().followedBtc)
-       setDocUid(docRefF)
-       setUserChangePass(docRefP)
+       setFollowingBNB(docName.data().followedBNB)
+       setFollowingEth(docName.data().followedEtherium)
+       setFollowingBTC(docName.data().followedBtc)
+       setDocUid(docRef)
+       setUserEdit(docRef)
        setDelUser(docRef)
        setUserN(docName.data().displayName)
-       setUserE(docE.data().Email)
+       setUserE(docName.data().Email)
        setUserP(docName.data().Password)
        setPassType("password")
        setShowPass(false)
@@ -118,7 +109,6 @@ export const Header = () =>{
        setShowPass2(false)
        setPassType3("password")
        setShowPass3(false)
-       console.log(DocF)
    }catch (error){
            console.log(error.message)
        }
@@ -170,29 +160,21 @@ export const Header = () =>{
       
             }
             try{
-              updateDoc(userChangePass,{Password:loginPassword})
+              updateDoc(userEdit,{Password:loginPassword})
             }catch(error){
       
             }
             const docRef=(doc(db,"Users",user.user.uid))
-            const docRefE=((doc(db,"Users",user.user.uid)))
-            const docRefP=doc(db,"Users",user.user.uid)
-            const docRefF=(doc(db,"Users",user.user.uid))
             const docName = await getDoc(docRef)
-            const docE= await getDoc(docRefE)
-            // setDocUid2(docRefF)
-            setDocUid(docRefF)
-            setDocF3(docName.data().followedBtc)
-            setDocF2(docName.data().followedBNB)
-            setDocF(docName.data().followedEtherium)
-            setFollowingBNB(docE.data().followedBNB)
-            setFollowingEth(docE.data().followedEtherium)
-            setFollowingBTC(docE.data().followedBtc)
+            setDocUid(docRef)
+            setFollowingBNB(docName.data().followedBNB)
+            setFollowingEth(docName.data().followedEtherium)
+            setFollowingBTC(docName.data().followedBtc)
             setDelUser(docRef)
             setUserE(docName.data().Email)
             setUserN(docName.data().displayName)
             setUserP(docName.data().Password)
-            setUserChangePass(docRefP)
+            setUserEdit(docRef)
             setlogisClicked(false)
             setShowPass(false)
             setPassType("password")
@@ -200,7 +182,6 @@ export const Header = () =>{
             setShowPass2(false)
             setPassType3("password")
             setShowPass3(false)
-            console.log(DocF)
         } catch (error){
           console.log(error.message)
         setlogisClicked(true)
@@ -229,8 +210,6 @@ export const Header = () =>{
     else{
       setPassType("text")
     }
-    console.log(showPass)
-    console.log(passType)
      }
 
      
@@ -281,7 +260,7 @@ export const Header = () =>{
 
       }
       try{
-        updateDoc(userChangePass,{Password:regPassword})
+        updateDoc(userEdit,{Password:regPassword})
       }catch(error){
 
       }
@@ -305,7 +284,7 @@ export const Header = () =>{
     }
     const changeUsername=()=>{
       try{
-        updateDoc(userChangePass,{displayName:regUsername})
+        updateDoc(userEdit,{displayName:regUsername})
       } catch(error){
 
       }
@@ -333,7 +312,7 @@ export const Header = () =>{
     const changeEmail=async ()=>{
       try{
         await updateEmail(CurUser, newEmail)
-        await updateDoc (userChangePass,{Email:regEmail})
+        await updateDoc (userEdit,{Email:regEmail})
         setPassType("password")
       setShowPass(false)
       setPassType2("password")
@@ -380,7 +359,6 @@ export const Header = () =>{
       setLoginEmail("")
       setLoginPassword("")
       setShowChangePass(false)
-      console.log(showProfile)
       setRegPassword("")
       setConfirmPass("")
       setConfirmPass2("")
@@ -458,7 +436,6 @@ export const Header = () =>{
     setlogisClicked(false)
     setregisClicked(current=>!current)
     setError('')
-    console.log(regisClicked)
   }
   const closeProf=()=>{
     setShowProfile(false)
@@ -475,63 +452,38 @@ export const Header = () =>{
       setRegPassword("")
       setEditN(false)
   }
-  useEffect(()=>{
-    setDocF(current=>!current)
-    setFollowEtherium(current=>!current)
-  },[followingEth])
-
-  useEffect(()=>{
-    setDocF2(current=>!current)
-    setFollowBNB(current=>!current)
-  },[followingBNB])
-  
-  useEffect(()=>{
-    setDocF3(current=>!current)
-    setFollowBTC(current=>!current)
-  },[followingBTC])
 
   const showfollow=()=>{
-    setShowIntrested(current=>!current)
+    // setShowIntrested(current=>!current)
     setFollow(current=>!current)
   }
   const followEth1=async ()=>{
-    setDocF(current=>!current)
     setFollowingEth(current=>!current)
         try{
-     await updateDoc(DocUid,{followedEtherium:followEtherium})}
+     await updateDoc(DocUid,{followedEtherium:!followingEth})}
      catch(error){
      console.log(error.message)
      }
-     if(DocF==true){
-      setFollowEtherium(current=>!current)
-     }
         }
         const followBnb=async()=>{
-          setDocF2(current=>!current)
           setFollowingBNB(current=>!current)
           try{
-            await updateDoc(DocUid,{followedBNB:followBNB})
+            await updateDoc(DocUid,{followedBNB:!followingBNB})
           }catch(error){
             console.log(error.message)
           }
-          if(DocF2==true){
-            setFollowBNB(current=>!current)
-          }
+          // if(DocF2==true){
+          //   setFollowBNB(current=>!current)
+          // }
         }
 
         const followBtc=async()=>{
-        setDocF3(current=>!current)
+ 
         setFollowingBTC(current=>!current)
         try{
-          await updateDoc(DocUid,{followedBtc:followBTC})
+          await updateDoc(DocUid,{followedBtc:!followingBTC})
         }catch(error){
-
-        }
-        console.log(DocF3)
-          console.log(followBTC)
-          console.log(followingBTC)
-        if(DocF3==true){
-          setFollowBTC(current=>!current)
+          console.log(error.message)
         }
         }
      function Follow(){
@@ -558,26 +510,26 @@ export const Header = () =>{
       
       function EthChange(){  
           if(EthP2>EthP1){
-            return<span style={{color:'green'}}>{(((EthP2-EthP1)/EthP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span>
+            return<span>The price has risen with<span style={{color:'green'}}>{(((EthP2-EthP1)/EthP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span></span>
           }else if(EthP1>EthP2){
-            return<span style={{color:'red'}}>{(((EthP1-EthP2)/EthP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span>
+            return<span>The price has fallen with<span style={{color:'red'}}>{(((EthP1-EthP2)/EthP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span></span>
           }
         
       }
       function BNBChange(){  
         if(BNBP2>BNBP1){
-          return<span style={{color:'green'}}>{(((BNBP2-BNBP1)/BNBP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span>
+          return<span>The price has risen with<span style={{color:'green'}}>{(((BNBP2-BNBP1)/BNBP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span></span>
         }else if(BNBP1>BNBP2){
-          return<span style={{color:'red'}}>{(((BNBP1-BNBP2)/BNBP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span>
+          return<span>The price has fallen with<span style={{color:'red'}}>{(((BNBP1-BNBP2)/BNBP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span></span>
         }
       
     }
 
     function BtcChange(){  
       if(BtcP2>BtcP1){
-        return<span style={{color:'green'}}>{(((BtcP2-BtcP1)/BtcP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span>
+        return<span>The price has risen with<span style={{color:'green'}}>{(((BtcP2-BtcP1)/BtcP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span></span>
       }else if(BtcP1>BtcP2){
-        return<span style={{color:'red'}}>{(((BtcP1-BtcP2)/BtcP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span>
+        return<span>The price has fallen with<span style={{color:'red'}}>{(((BtcP1-BtcP2)/BtcP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span></span>
       }
     
   }
@@ -672,15 +624,15 @@ export const Header = () =>{
         <div>
        <div className={styles.followEth}> 
         {followingEth?<div><h2>Etherium</h2>
-      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. The price has risen with {<EthChange/>}</span></div>:null}
+      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. {<EthChange/>}</span></div>:null}
       </div>
       <div className={styles.followEth}>
       {followingBNB?<div><h2>BNB</h2>
-      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BNBP1} and has gone to: {"$" + BNBP2}. The price has risen with {<BNBChange/>}</span></div>:null}
+      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BNBP1} and has gone to: {"$" + BNBP2}. {<BNBChange/>}</span></div>:null}
       </div>
       <div className={styles.followEth}>
       {followingBTC?<div><h2>Btc</h2>
-      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BtcP1} and has gone to: {"$" + BtcP2}. The price has risen with {<BtcChange/>}</span></div>:null}
+      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BtcP1} and has gone to: {"$" + BtcP2}. {<BtcChange/>}</span></div>:null}
       </div>
       </div>:<h2>You have to follow a currency. You can do this by going to profile then in Intrests</h2>}
       </div> 
@@ -688,7 +640,7 @@ export const Header = () =>{
     }
     return(
         <header style={styles} className={styles.container}>
-            <Link  to="/" src={"./logo.png"}><img style={{right:expand? "151.4%":null}} src={require ("./logo.png")} alt="logo here" /></Link>
+            <Link  to="/" src={"./logo.png"}><img src={require ("./logo.png")} alt="logo here" /></Link>
             {
             CurUser?
             <div 
@@ -711,6 +663,7 @@ export const Header = () =>{
             </div>
             :
             <div>
+              
              <button className={styles.button} onClick={handleLog} href="Log in">Log in</button>
              <button className={styles.button} onClick={handleReg} href="Register">Register</button>
             </div>}
@@ -881,7 +834,7 @@ export const Header = () =>{
                 <div className={styles.Email}>
                <label htmlFor="EditUserName">E-Mail:</label>
                <p>{userE}</p>
-               <button style={{margin:'auto'}} onClick={handleEditE}>Edit E-mail</button>
+               <button style={{margin:'auto'}} onClick={handleEditE}>Change E-mail</button>
                </div>
                 }
                 <div className='interested'>
@@ -984,7 +937,7 @@ export const Header = () =>{
                         {regPassword && confirmPass2===regPassword? <p style={{color:'green', margin:'0', marginTop:'0.5rem', fontSize:'1.3rem', letterSpacing:'1px'}}>Passwords Match</p>:null}</div>:null
                         }
                     </div>
-                    {loginPassword && confirmPass==loginPassword || confirmPass==userP?
+                    {loginPassword && confirmPass===loginPassword || confirmPass===userP?
                     <div>
                     {confirmPass2?
                     <div>{confirmPass2===regPassword? <p style={{cursor:'pointer'}} onClick={changePass}>Change password</p>:<p>You can't change password</p>}</div>:<p>Must fill all fields</p>} </div>
