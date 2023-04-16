@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useRef } from "react";
 import {EthChart, BitCoinChart,BNBChart } from "./charts/Cryptocharts";
 import style from "./Crypto.module.css"
-export const BitcoinPrice = () => {
+export const BitcoinPrice = (props) => {
     const [price, setPrice] = useState(null);
 
     const prevPrice=usePrevious(price)
@@ -18,9 +18,7 @@ export const BitcoinPrice = () => {
             )
               .then((data) => 
               {
-                // console.log(data);
                 setPrice(data.fiat.usd);
-                // setSymbol(data[0].symbol);
                 setLoading(false); 
                 timeoutId= setTimeout(getLatestPrice, 10000);
               }
@@ -30,7 +28,7 @@ export const BitcoinPrice = () => {
             console.log(error);
           });
         }
-        getLatestPrice();
+        timeoutId= setTimeout(getLatestPrice, 10000);
         return()=>{
           clearTimeout(timeoutId)
         }
@@ -68,7 +66,7 @@ export const BitcoinPrice = () => {
         }
 }
 
-export const EtheriumPrice = () => {
+    export const EtheriumPrice= () =>{
     const [price, setPrice] = useState(null);
 
     const prevPrice=usePrevious(price)
@@ -85,9 +83,7 @@ export const EtheriumPrice = () => {
             .then((res) => res.json())
               .then((data) => 
               {
-                // console.log(data);
                 setPrice(data.fiat.usd);
-                // setSymbol(data[0].symbol);
                 setLoading(false);
                 timeoutId= setTimeout(getLatestPrice, 10000);
               }
@@ -97,12 +93,12 @@ export const EtheriumPrice = () => {
             console.log(error);
           });
         }
-        getLatestPrice()
+        timeoutId= setTimeout(getLatestPrice, 10000);
 
         return()=>{
           clearTimeout(timeoutId)
         }
-    }, [setPrice]);
+    }, []);
     return (
       <div className={style.eth}>
        <div className={style.nameWrapper}>  
@@ -121,7 +117,7 @@ export const EtheriumPrice = () => {
     </section>
        <EthChart/>
       </div>
-      );  
+    );  
       
 
 
@@ -133,7 +129,8 @@ export const EtheriumPrice = () => {
           }, [value]);
           return ref.current;
         }
-}
+ }
+
 
 export const BNBPrice = () => {
   const [price, setPrice] = useState(null);
@@ -145,31 +142,29 @@ export const BNBPrice = () => {
   const url='https://price-api.crypto.com/price/v1/exchange/bnb'
   useEffect(() => 
   {
-      let timeoutId;
-      async function getLatestPrice()
-      {
-          fetch(url)
-          .then((res) => res.json())
-            .then((data) => 
-            {
-              // console.log(data);
-              setPrice(data.fiat.usd);
-              // setSymbol(data[0].symbol);
-              setLoading(false);
-              timeoutId= setTimeout(getLatestPrice, 10000);
-            }
-            )
-  
-       .catch((error) => {
-          console.log(error);
-        });
-      }
-      getLatestPrice()
+    let timeoutId;
+    async function getLatestPrice()
+    {
+        fetch(url)
+        .then((res) =>res.json()
+        )
+          .then((data) => 
+          {
+            setPrice(data.fiat.usd);
+            setLoading(false); 
+            timeoutId= setTimeout(getLatestPrice, 10000);
+          }
+         )
 
-      return()=>{
-        clearTimeout(timeoutId)
-      }
-  }, [setPrice]);
+     .catch((error) => {
+        console.log(error);
+      });
+    }
+    timeoutId= setTimeout(getLatestPrice, 10000);
+    return()=>{
+      clearTimeout(timeoutId)
+    }
+}, []);
   return (
     
     <div className={style.bnb}>
