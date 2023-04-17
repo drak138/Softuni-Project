@@ -4,7 +4,6 @@ import { db, auth} from '../../firebase';
 import {setDoc, doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore'
 import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail,sendPasswordResetEmail} from 'firebase/auth'
 import validator from 'validator'
-import { async } from '@firebase/util';
 import { Routes,Route,Link} from 'react-router-dom';
 
 export const Header = () =>{
@@ -52,8 +51,6 @@ export const Header = () =>{
 
     const [CurUser, setUser]=useState('')
 
-    const [delUser,setDelUser]=useState('')
-
     const [userN,setUserN]=useState('')
 
     const[userE,setUserE]=useState('')
@@ -84,8 +81,7 @@ export const Header = () =>{
 
   const [editN, setEditN]=useState(false)
   const [editE, setEditE]=useState(false)
-
-  
+    
   
      const register= async ()=>{
       setregisClicked(current=>!current)
@@ -99,16 +95,10 @@ export const Header = () =>{
        setFollowingBTC(docName.data().followedBtc)
        setDocUid(docRef)
        setUserEdit(docRef)
-       setDelUser(docRef)
        setUserN(docName.data().displayName)
        setUserE(docName.data().Email)
        setUserP(docName.data().Password)
-       setPassType("password")
-       setShowPass(false)
-       setPassType2("password")
-       setShowPass2(false)
-       setPassType3("password")
-       setShowPass3(false)
+       close()
    }catch (error){
            console.log(error.message)
        }
@@ -170,18 +160,11 @@ export const Header = () =>{
             setFollowingBNB(docName.data().followedBNB)
             setFollowingEth(docName.data().followedEtherium)
             setFollowingBTC(docName.data().followedBtc)
-            setDelUser(docRef)
             setUserE(docName.data().Email)
             setUserN(docName.data().displayName)
             setUserP(docName.data().Password)
             setUserEdit(docRef)
-            setlogisClicked(false)
-            setShowPass(false)
-            setPassType("password")
-            setPassType2("password")
-            setShowPass2(false)
-            setPassType3("password")
-            setShowPass3(false)
+            close()
         } catch (error){
           console.log(error.message)
         setlogisClicked(true)
@@ -201,6 +184,7 @@ export const Header = () =>{
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
           })
+          
     }
      const togglePassword=()=>{
     setShowPass(current=>!current)
@@ -234,23 +218,7 @@ export const Header = () =>{
      
     const logout=async()=>{
       await signOut(auth);
-      setPassType("password")
-      setShowPass(false)
-      setPassType2("password")
-      setShowPass2(false)
-      setPassType3("password")
-      setShowPass3(false)
-        setShowProfile(false);
-        setExpand(false)
-        setShowDel(false)
-        setRegEmail("")
-        setLoginEmail("")
-        setLoginPassword("")
-        setShowChangePass(false)
-        setConfirmPass("")
-        setConfirmPass2("")
-        setError("")
-        setShowPass(false)
+      close()
     }
     const newPass=(regPassword)
     const changePass=()=>{
@@ -264,22 +232,7 @@ export const Header = () =>{
       }catch(error){
 
       }
-      setPassType("password")
-      setShowPass(false)
-      setPassType2("password")
-      setShowPass2(false)
-      setPassType3("password")
-      setShowPass3(false)
-      signOut(auth)
-      setLoginEmail("")
-      setLoginPassword("")
-        setShowDel(false)
-        setShowProfile(false);
-        setExpand(false)
-        setShowChangePass(false)
-        setConfirmPass("")
-        setConfirmPass2("")
-        setError("")
+      close()
         
     }
     const changeUsername=()=>{
@@ -288,48 +241,14 @@ export const Header = () =>{
       } catch(error){
 
       }
-      setPassType("password")
-      setShowPass(false)
-      setPassType2("password")
-      setShowPass2(false)
-      setPassType3("password")
-      setShowPass3(false)
-      signOut(auth);
-      setRegEmail("")
-      setLoginEmail("")
-      setLoginPassword("")
-      setShowDel(false)
-        setShowProfile(false);
-        setExpand(false)
-        setShowChangePass(false)
-        setConfirmPass("")
-        setConfirmPass2("")
-        setEditN(false)
-        setError("")
-        
+      close()
     }
     const newEmail=(regEmail)
     const changeEmail=async ()=>{
       try{
         await updateEmail(CurUser, newEmail)
         await updateDoc (userEdit,{Email:regEmail})
-        setPassType("password")
-      setShowPass(false)
-      setPassType2("password")
-      setShowPass2(false)
-      setPassType3("password")
-      setShowPass3(false)
-      signOut(auth);
-      setRegEmail("")
-      setLoginEmail("")
-      setLoginPassword("")
-      setShowDel(false)
-        setShowProfile(false);
-        setExpand(false)
-        setShowChangePass(false)
-        setConfirmPass("")
-        setConfirmPass2("")
-        setError("")
+        close()
       }catch(error){
         console.log(error.message)
         setEditE(true)
@@ -345,24 +264,7 @@ export const Header = () =>{
       } catch(error){
 
       }
-      signOut(auth);
-      setFollowingEth(false)
-      setPassType("password")
-      setShowPass(false)
-      setPassType2("password")
-      setShowPass2(false)
-      setPassType3("password")
-      setShowPass3(false)
-      deleteDoc(delUser);
-      setShowProfile(false);
-      setExpand(false)
-      setLoginEmail("")
-      setLoginPassword("")
-      setShowChangePass(false)
-      setRegPassword("")
-      setConfirmPass("")
-      setConfirmPass2("")
-      setError("")  
+      logout() 
     };
 
     const validateEmail = (e) => {
@@ -395,36 +297,6 @@ export const Header = () =>{
       setConfirmPass("")
     }
 
-    const closeReg=()=>{
-      setregisClicked(false)
-      setPassType("password")
-      setShowPass(false)
-      setPassType2("password")
-      setShowPass2(false)
-      setRegUsername("")
-      setRegEmail("")
-      setRegPassword("")
-      setConfirmPass("")
-      setConfirmPass2("")
-      setError("")
-    }    
-
-    const closeLog=()=>{
-      setlogisClicked(false)
-      setPassType("password")
-      setShowPass(false)
-      setLoginEmail("")
-      setLoginPassword("")
-      setError("")
-      setLoginEmail("")
-      setLoginPassword("")
-      setShowChangePass(false)
-      setRegPassword("")
-      setConfirmPass("")
-      setConfirmPass2("")
-      setError("")
-    }
-
   const handleLog=()=>{
     setForgot(false)
     setlogisClicked(current=>!current)
@@ -437,20 +309,28 @@ export const Header = () =>{
     setregisClicked(current=>!current)
     setError('')
   }
-  const closeProf=()=>{
+  const close=()=>{
+    setlogisClicked(false)
+    setregisClicked(false)
     setShowProfile(false)
     setPassType("password")
-      setShowPass(false)
-      setPassType2("password")
-      setShowPass2(false)
-      setPassType3("password")
-      setShowPass3(false)
+    setPassType("password")
+    setShowPass(false)
+    setPassType2("password")
+    setShowPass2(false)
+    setPassType3("password")
+    setShowPass3(false)
+      setShowProfile(false);
+      setExpand(false)
+      setShowDel(false)
+      setRegEmail("")
+      setLoginEmail("")
+      setLoginPassword("")
+      setShowChangePass(false)
       setConfirmPass("")
       setConfirmPass2("")
-      setShowChangePass(false)
-      setEditE(false)
-      setRegPassword("")
-      setEditN(false)
+      setError("")
+      setShowPass(false)
   }
 
   const showfollow=()=>{
@@ -657,7 +537,7 @@ export const Header = () =>{
             {expand?<ul>
             <button onClick={()=>setShowProfile(current=>!current)}>Profile</button>
             {/* <button onClick={showfollow}>Intrested</button> */}
-            <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}} onClick={closeProf} to="/follow">Intrested</Link>
+            <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}} onClick={close} to="/follow">Intrested</Link>
             <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}}  onClick={logout} to="/">signOut</Link>
             </ul>:null}
             </div>
@@ -670,7 +550,7 @@ export const Header = () =>{
             {
             regisClicked?<div className={styles.register}>
                 <div>
-                <i onClick={closeReg} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
+                <i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
                     <div>
                         <label htmlFor="username">Username:</label>
                         <input 
@@ -733,7 +613,7 @@ export const Header = () =>{
             {
             logisClicked?<div className={styles.login}>
             <div>
-            <i onClick={closeLog} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
+            <i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
               <div>
                 <label htmlFor="email">Email:</label>
                   <input 
@@ -783,7 +663,7 @@ export const Header = () =>{
                 <button onClick={SendEmail}>Send E-mail</button>
            </div>:null}          
                {showProfile?<div className={styles.editProfile}>
-               <i onClick={closeProf} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
+               <i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
                 {editN?<div className={styles.Name}>
                <label htmlFor="EditUserName">New Username:</label>
                <input 
@@ -821,20 +701,20 @@ export const Header = () =>{
                      {regEmail?
                      <div>
                      {regEmail===userE?<span style={{marginRight:'2rem'}}>E-mail must be new</span>
-                     :<span style={{marginRight:'4rem'}} ><button style={{float:'none'}} disabled={!(/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(regEmail))} onClick={changeEmail}>Edit E-mail
-                     </button></span>
+                     :<span style={{marginRight:'4rem'}} >{emailError==="Enter valid Email!"?null:<button style={{float:'none'}} disabled={!(/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(regEmail))} onClick={changeEmail}>Edit E-mail
+                     </button>}</span>
                      }
-                     <span style={{color:'green'}}>{emailError}</span>
+                     {emailError==="Valid Email :)"?<span style={{color:'green'}}>{emailError}</span>:<span style={{color:'red'}}>{emailError}</span>}
                      </div>
                      :<span style={{marginLeft: '40px',marginRight: '19px'}}>You need to fill new E-mail</span>
                      }
-                     <span style={{margin:'auto',marginTop:'0.5rem', color:'red'}}>{ErrorM}</span>
+                     {ErrorM?<span style={{margin:'auto',marginTop:'0.5rem', color:'red'}}>{ErrorM}</span>:null}
                </div>
                 </div>:
                 <div className={styles.Email}>
                <label htmlFor="EditUserName">E-Mail:</label>
                <p>{userE}</p>
-               <button style={{margin:'auto'}} onClick={handleEditE}>Change E-mail</button>
+               <button style={{margin:'auto'}} onClick={handleEditE}>Chamge E-mail</button>
                </div>
                 }
                 <div className='interested'>
