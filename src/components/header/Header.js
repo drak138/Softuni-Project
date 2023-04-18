@@ -5,37 +5,35 @@ import {setDoc, doc, getDoc, deleteDoc, updateDoc} from 'firebase/firestore'
 import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,signOut, deleteUser, updatePassword, updateEmail,sendPasswordResetEmail} from 'firebase/auth'
 import validator from 'validator'
 import { Routes,Route,Link} from 'react-router-dom';
+import  Follow  from './prices/Prices';
 
-export const Header = () =>{
+export const Header = (props) =>{
 
-   const[DocUid,setDocUid]=useState('')
+
+   const[DocUid,setDocUid]=useState([])
     const[regUsername,setRegUsername]=useState('')
 
     const [emailError, setEmailError] = useState('')
 
     const[userP,setUserP]=useState('')
 
-
-
     const[follow,setFollow]=useState(false)
 
+    const[followingEth,setFollowingEth]=useState(false)
 
+    const[followingBNB,setFollowingBNB]=useState(false)
 
-    const[followingEth,setFollowingEth]=useState(Boolean)
-
-
-
-    const[followingBNB,setFollowingBNB]=useState(Boolean)
-
-
-
-    const[followingBTC,setFollowingBTC]=useState(Boolean)
+    const[followingBTC,setFollowingBTC]=useState(false)
 
     const[userEdit,setUserEdit]=useState('')
 
     const[confirmPass2,setConfirmPass2]=useState('')
 
     const[expand, setExpand]=useState(false)
+
+    const[showMenu,setShow]=useState(true)
+
+    const[Menu,setShowMenu]=useState(true)
 
     const[showChangePass, setShowChangePass]=useState(false)
 
@@ -82,7 +80,6 @@ export const Header = () =>{
   const [editN, setEditN]=useState(false)
   const [editE, setEditE]=useState(false)
     
-  
      const register= async ()=>{
       setregisClicked(current=>!current)
         try{
@@ -196,7 +193,16 @@ export const Header = () =>{
     }
      }
 
-     
+     const showInterested=()=>{
+      props.showInterested(current=>!current)
+     close()
+     }
+
+    //  useEffect(()=>{
+    //   props.getData(showMenu)
+    //   console.log(showMenu)
+    //  },[showMenu])
+
      const togglePassword2=()=>{
       setShowPass2(current=>!current)
       if(showPass2){
@@ -264,6 +270,7 @@ export const Header = () =>{
       } catch(error){
 
       }
+      deleteDoc(userEdit);
       logout() 
     };
 
@@ -313,6 +320,7 @@ export const Header = () =>{
     setlogisClicked(false)
     setregisClicked(false)
     setShowProfile(false)
+    setForgot(false)
     setPassType("password")
     setPassType("password")
     setShowPass(false)
@@ -320,7 +328,6 @@ export const Header = () =>{
     setShowPass2(false)
     setPassType3("password")
     setShowPass3(false)
-      setShowProfile(false);
       setExpand(false)
       setShowDel(false)
       setRegEmail("")
@@ -334,7 +341,6 @@ export const Header = () =>{
   }
 
   const showfollow=()=>{
-    // setShowIntrested(current=>!current)
     setFollow(current=>!current)
   }
   const followEth1=async ()=>{
@@ -352,9 +358,6 @@ export const Header = () =>{
           }catch(error){
             console.log(error.message)
           }
-          // if(DocF2==true){
-          //   setFollowBNB(current=>!current)
-          // }
         }
 
         const followBtc=async()=>{
@@ -366,170 +369,18 @@ export const Header = () =>{
           console.log(error.message)
         }
         }
-     function Follow(){
-      const round =(number)=>{
-        return number ? +number.toFixed(2):null
-      }
-      // const multiply=(number)=>{
-      //   return number? +number *1000
-      // }
 
-      const[EthP1,setEthP1]=useState([])
-      const[EthP2,setEthP2]=useState([])
-      const[BNBP1,setBNBP1]=useState([])
-      const[BNBP2,setBNBP2]=useState([])
-      const[BtcP1,setBtcP1]=useState([])
-      const[BtcP2,setBtcP2]=useState([])
-      const urlEth1=`/v8/finance/chart/ETH-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
-      const urlEth2='https://price-api.crypto.com/price/v1/exchange/ethereum'
-      const urlBNB1=`/v8/finance/chart/BNB-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
-      const urlBNB2='https://price-api.crypto.com/price/v1/exchange/bnb'
-      const urlBtc1=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
-      const urlBtc2='https://price-api.crypto.com/price/v1/exchange/bitcoin'
-      
-      
-      function EthChange(){  
-          if(EthP2>EthP1){
-            return<span>The price has risen with<span style={{color:'green'}}>{(((EthP2-EthP1)/EthP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span></span>
-          }else if(EthP1>EthP2){
-            return<span>The price has fallen with<span style={{color:'red'}}>{(((EthP1-EthP2)/EthP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span></span>
-          }
-        
-      }
-      function BNBChange(){  
-        if(BNBP2>BNBP1){
-          return<span>The price has risen with<span style={{color:'green'}}>{(((BNBP2-BNBP1)/BNBP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span></span>
-        }else if(BNBP1>BNBP2){
-          return<span>The price has fallen with<span style={{color:'red'}}>{(((BNBP1-BNBP2)/BNBP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span></span>
-        }
-      
-    }
-
-    function BtcChange(){  
-      if(BtcP2>BtcP1){
-        return<span>The price has risen with<span style={{color:'green'}}>{(((BtcP2-BtcP1)/BtcP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span></span>
-      }else if(BtcP1>BtcP2){
-        return<span>The price has fallen with<span style={{color:'red'}}>{(((BtcP1-BtcP2)/BtcP1)*100).toFixed(2)+ "%"} <i className="fa-solid fa-caret-down"></i></span></span>
-      }
-    
-  }
-
-      const now = new Date()
-
-        const oneWeek= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)
-      useEffect(()=>{
-      fetch(urlEth1)
-              .then((res) =>res.json()
-              )
-              .then((data)=>{
-                setEthP1([[data.chart.result[0].indicators.quote[0].close[0]].map(round)])
-              })
-     },[])
-     useEffect(() => 
-     {
-         {
-             fetch(urlEth2)
-             .then((res) =>res.json()
-             )
-               .then((data) => 
-               {
-                 setEthP2((data.fiat.usd).toFixed(2))
-               }
-              )
-     
-          .catch((error) => {
-             console.log(error)
-           })
-         }
-     }, [])
-
-     useEffect(()=>{
-      fetch(urlBNB1)
-              .then((res) =>res.json()
-              )
-              .then((data)=>{
-                setBNBP1([[data.chart.result[0].indicators.quote[0].close[0]].map(round)])
-              })
-     },[])
-
-     useEffect(() => 
-     {
-         {
-             fetch(urlBNB2)
-             .then((res) =>res.json()
-             )
-               .then((data) => 
-               {
-                 setBNBP2((data.fiat.usd).toFixed(2))
-               }
-              )
-     
-          .catch((error) => {
-             console.log(error)
-           })
-         }
-     }, [])
-
-     useEffect(()=>{
-      fetch(urlBtc1)
-              .then((res) =>res.json()
-              )
-              .then((data)=>{
-                setBtcP1([[data.chart.result[0].indicators.quote[0].close[0]].map(round)])
-              })
-     },[])
-
-     useEffect(() => 
-     {
-         {
-             fetch(urlBtc2)
-             .then((res) =>res.json()
-             )
-               .then((data) => 
-               {
-                 setBtcP2((data.fiat.usd).toFixed(2))
-               }
-              )
-     
-          .catch((error) => {
-             console.log(error)
-           })
-         }
-     }, [])
-
-      return(
-      <div className={styles.followWrapper}>
-        <div style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to="/"><i className="fa-solid fa-x"></i></Link></div>
-        {followingBNB||followingBTC||followingEth?
-        <div>
-       <div className={styles.followEth}> 
-        {followingEth?<div><h2>Etherium</h2>
-      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. {<EthChange/>}</span></div>:null}
-      </div>
-      <div className={styles.followEth}>
-      {followingBNB?<div><h2>BNB</h2>
-      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BNBP1} and has gone to: {"$" + BNBP2}. {<BNBChange/>}</span></div>:null}
-      </div>
-      <div className={styles.followEth}>
-      {followingBTC?<div><h2>Btc</h2>
-      <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + BtcP1} and has gone to: {"$" + BtcP2}. {<BtcChange/>}</span></div>:null}
-      </div>
-      </div>:<h2>You have to follow a currency. You can do this by going to profile then in Intrests</h2>}
-      </div> 
-     )
-    }
     return(
         <header style={styles} className={styles.container}>
-            <Link  to="/" src={"./logo.png"}><img src={require ("./logo.png")} alt="logo here" /></Link>
+            <Link  to="/" src={"./logo.png"}><img src={require ("./logo.png")} alt="logo here" /><></></Link>
             {
             CurUser?
             <div 
             style={{border:expand? "solid":null,borderColor:expand? "white":null,borderWidth:expand? "2px":null,
-            position:expand?'absolute':'relative',left:expand? '88.3%':null,
-            backgroundColor:expand?'#46507c':null,
+            position:expand?'absolute':'relative',right:expand? '2px':null,
+            backgroundColor:expand?'#46507c':null, zIndex:expand? '3' :null,
             top:expand? "35%":null}} 
             className={styles.profile}>
-
             <div
             onClick={()=>setExpand(!expand)} 
             className={styles.UserName}>{userN}</div> 
@@ -537,12 +388,13 @@ export const Header = () =>{
             {expand?<ul>
             <button onClick={()=>setShowProfile(current=>!current)}>Profile</button>
             {/* <button onClick={showfollow}>Intrested</button> */}
-            <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}} onClick={close} to="/follow">Intrested</Link>
+           <div onClick={showInterested}> <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}} to="/follow">Intrested</Link></div>
+
             <Link style={{fontSize:'1.2rem',color:'white',textDecoration:'none'}}  onClick={logout} to="/">signOut</Link>
             </ul>:null}
             </div>
             :
-            <div>
+            <div style={{width:'-webkit-fill-available'}}>
               
              <button className={styles.button} onClick={handleLog} href="Log in">Log in</button>
              <button className={styles.button} onClick={handleReg} href="Register">Register</button>
@@ -550,7 +402,7 @@ export const Header = () =>{
             {
             regisClicked?<div className={styles.register}>
                 <div>
-                <i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
+                <Link style={{textDecoration:'none',color:'white'}} to="/"><i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i></Link>
                     <div>
                         <label htmlFor="username">Username:</label>
                         <input 
@@ -613,7 +465,7 @@ export const Header = () =>{
             {
             logisClicked?<div className={styles.login}>
             <div>
-            <i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
+            <Link style={{textDecoration:'none',color:'white'}} to='/'><i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i></Link>
               <div>
                 <label htmlFor="email">Email:</label>
                   <input 
@@ -650,6 +502,7 @@ export const Header = () =>{
            }
            {forgot?<div className={styles.Forgot}>
            <div>
+           <i onClick={close} style={{cursor:'pointer', position:'absolute',top:'1%',left:'96%'}} className="fa-solid fa-x"></i>
                 <label htmlFor="email">Email:</label>
                   <input 
                    id="email" 
@@ -759,10 +612,12 @@ export const Header = () =>{
                   <button onClick={()=>setShowDel(false)}>No</button>
                   </div>
                  </div>:null}
-                 {showChangePass?<div className={styles.changePass}>
-                    <div style={{fontSize: '20px',position: 'relative',marginBottom: '2rem',display:'flex',alignItems:'center'}}>
+                 {showChangePass?
+                 <div className={styles.changePass}>
+                    <div style={{fontSize: '20px',position: 'relative',marginBottom: '2rem'}}>
+                    <div className={styles.passwords} style={{fontSize: '20px',position: 'relative',marginBottom: '2rem',display:'flex',alignItems:'center'}}>
                       <label htmlFor="confirmPass">Current Password</label>
-                      <div style={{width: '63%', margin: '0', flexDirection: 'row', backgroundColor: 'white', border: '2px inset', borderTopColor: 'rgb(118, 118, 118)', borderLeftColor: 'rgb(118, 118, 118', borderBottomColor: 'rgb(133, 133, 133)', borderRightColor: 'rgb(133, 133, 133)', gap: '0', marginLeft: '1%'}}>
+                      <div style={{width: '63%'}}>
                       <input 
                       style={{width:'91%',padding:'0',fontSize:'22px', borderWidth:'0px', outline:'none',backgroundColor:'transparent'}} 
                       id="confirmPassword" 
@@ -778,10 +633,9 @@ export const Header = () =>{
                     border: 'none'}} onClick={togglePassword}><i style={{color:'black'}} className="fa-solid fa-eye"></i></button>}
                       </div>
                     </div>
-                    <div style={{fontSize: '20px',position: 'relative',marginBottom: '2rem'}}>
-                       <div style={{marginBottom: '2rem',display:'flex',alignItems:'center'}}>
+                       <div className={styles.passwords} style={{marginBottom: '2rem',display:'flex',alignItems:'center'}}>
                         <label htmlFor="newPass">New Password</label>
-                       <div style={{width: '68.7%', margin: '0', flexDirection: 'row', backgroundColor: 'white', border: '2px inset', borderTopColor: 'rgb(118, 118, 118)', borderLeftColor: 'rgb(118, 118, 118', borderBottomColor: 'rgb(133, 133, 133)', borderRightColor: 'rgb(133, 133, 133)', gap: '0', marginLeft: '1%'}}>
+                       <div style={{width: '68.7%'}}>
                         <input 
                         style={{width:'91%',padding:'0',fontSize:'22px', borderWidth:'0px', outline:'none',backgroundColor:'transparent'}} 
                         id="newPassword" 
@@ -795,9 +649,9 @@ export const Header = () =>{
                         }
                     </div>
                     </div>
-                    <div style={{fontSize: '20px',position: 'relative', display:'flex',alignItems:'center'}}>
+                    <div className={styles.passwords} style={{fontSize: '20px',position: 'relative', display:'flex',alignItems:'center'}}>
                       <label htmlFor="confirmNewPass">Confirm new password</label>
-                      <div style={{width: '53%', margin: '0', flexDirection: 'row', backgroundColor: 'white', border: '2px inset', borderTopColor: 'rgb(118, 118, 118)', borderLeftColor: 'rgb(118, 118, 118', borderBottomColor: 'rgb(133, 133, 133)', borderRightColor: 'rgb(133, 133, 133)', gap: '0', marginLeft: '1%'}}>
+                      <div style={{width: '53%'}}>
                       <input 
                       style={{width:'90%',padding:'0',fontSize:'22px', borderWidth:'0px', outline:'none',backgroundColor:'transparent'}}
                       id="confirmpassword" 
@@ -825,7 +679,16 @@ export const Header = () =>{
                  </div>:null}
           </div>:null}
           <Routes>
-              <Route path="/follow" element={<Follow/>}></Route>
+              <Route path="/follow" 
+              element=
+                {<Follow 
+                followingEth={followingEth} 
+                followingBTC={followingBTC} 
+                followingBNB={followingBNB} 
+                // getData={props.getData}
+                showInterested={showInterested}
+                />}>
+                </Route>
             </Routes>
        </header>
       )}
