@@ -6,6 +6,7 @@
     gap: 20px;
   }
   .btc{
+    z-index: 0;
       height: fit-content;
       width: 48%;
       /* za mac trqbwa width da e 48% */
@@ -17,6 +18,7 @@
       flex-direction: row;
       justify-content: space-between;
       flex-wrap: wrap;
+      margin: auto;
   }
   .nameWrapper{
       height: 57px;
@@ -52,6 +54,7 @@
     border-radius: 10px;
     display: flex;
     flex-direction: row;
+    margin: auto;
     justify-content: space-between;
     flex-wrap: wrap;
 }
@@ -81,6 +84,7 @@ img{
 /* BNB style ////////////////////////////////////////////////////////////*/
 
 .bnb{
+  z-index: 0;
     height: fit-content;
     width: 48%;
     min-width: 563px;
@@ -89,6 +93,7 @@ img{
     border-radius: 10px;
     display: flex;
     flex-direction: row;
+    margin: auto;
     justify-content: space-between;
     flex-wrap: wrap;
 }
