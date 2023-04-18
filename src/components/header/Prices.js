@@ -1,19 +1,14 @@
 import {useEffect, useState} from 'react';
 import { Auth, onAuthStateChanged } from "firebase/auth";
 import { Routes,Route,Link} from 'react-router-dom';
-import styles from './header.module.css'
-export function Follow (followBtc,followBnb,followEth) {
+import styles from '../header.module.css'
+export default function Follow(props){
+  const{followingEth, followingBTC, followingBNB, showInterested}=props;
+console.log(props)
   const[EthP1,setEthP1]=useState([])
 
-  const[followingEth1,setFollowingEth1]=useState(false)
+  const[showMenu,setShow]=useState(true)
 
-
-
-  const[followingBNB,setFollowingBNB]=useState(false)
-
-
-
-  const[followingBTC,setFollowingBTC]=useState(false)
       const[EthP2,setEthP2]=useState([])
       const[BNBP1,setBNBP1]=useState([])
       const[BNBP2,setBNBP2]=useState([])
@@ -26,15 +21,11 @@ export function Follow (followBtc,followBnb,followEth) {
       const urlBtc1=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
       const urlBtc2='https://price-api.crypto.com/price/v1/exchange/bitcoin'
     
-      useEffect(() => {
-        setFollowingEth1({followEth})
-        console.log(followingEth1);
-      },[]);
-    
       const round = (number) => {
         return number ? +number.toFixed(2) : null;
       };
-    
+
+
       function EthChange() {
         if (EthP2 > EthP1) {
           return (
@@ -58,7 +49,7 @@ export function Follow (followBtc,followBnb,followEth) {
           );
         }
       }
-        
+
       function BNBChange(){  
         if(BNBP2>BNBP1){
           return<span>The price has risen with<span style={{color:'green'}}>{(((BNBP2-BNBP1)/BNBP1)*100).toFixed(2) + "%"} <i className="fa-solid fa-sort-up"></i></span></span>
@@ -157,14 +148,22 @@ export function Follow (followBtc,followBnb,followEth) {
            })
          }
      }, [])
+
+     const close=()=>{
+      showInterested()
+     }
+    //  useEffect(()=>{
+    //   props.getData(showMenu)
+    //   console.log(showMenu)
+    //  },[showMenu])
+
   return(
     <div className={styles.followWrapper}>
-     
-      <div style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to="/"><i className="fa-solid fa-x"></i></Link></div>
-      {followingBNB||followingBTC||followingEth1?
+      <div onClick={close} style={{float:'right',margin:'1% 1% 0 0'}}><Link style={{textDecoration:'none',color:'white'}} to="/"><i className="fa-solid fa-x"></i></Link></div>
+      {followingBNB||followingBTC||followingEth?
       <div>
      <div className={styles.followEth}> 
-      {followingEth1?<div><h2>Etherium</h2>
+      {followingEth?<div><h2>Etherium</h2>
     <span style={{fontSize:'1.2rem'}}>Price on:{oneWeek.toLocaleDateString()} was : {"$" + EthP1} and has gone to: {"$" + EthP2}. {<EthChange/>}</span></div>:null}
     </div>
     <div className={styles.followEth}>
