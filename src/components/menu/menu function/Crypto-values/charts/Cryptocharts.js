@@ -1,6 +1,6 @@
 import Chart from 'react-apexcharts'
 import style from '../Crypto.module.css'
-import React,{ useEffect, useRef, useState } from 'react'
+import React,{ useEffect, useState } from 'react'
 export const BitCoinChart =()=>{
     const round =(number)=>{
       return number ? +number.toFixed(2):null
@@ -12,7 +12,7 @@ export const BitCoinChart =()=>{
       data:[]
       }]
       )
-    const url=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
+    const url=`/v8/finance/chart/BTC-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
     useEffect(() => 
       {
           let timeoutId;
@@ -23,17 +23,19 @@ export const BitCoinChart =()=>{
               )
               .then((data) => 
                 {
-                  console.log(data.chart);
                   const quote= data.chart.result[0].indicators.quote[0]
                   const prices=data.chart.result[0].timestamp.map((timestamp, index)=>
                 (
                    {
                     x: new Date(timestamp*1000),
-                    y: [ quote.open[index], quote.high[index], quote.low[index], quote.close[index]].map(round)}))
-                    setSeries([{
+                    y: [ quote.open[index], quote.high[index], quote.low[index], quote.close[index]].map(round)
+                   }))
+                    
+                   setSeries
+                    ([{
                       data:prices
                     }])
-                   }
+                }
                 )
              
            .catch((error) => {
@@ -70,7 +72,7 @@ export const BitCoinChart =()=>{
       }
     };
     return (
-      <div style={{width:'95%'}} className="app">
+      <div style={{width:'95%',zIndex:'0'}} className="app">
         <div className="row">
           <div className="mixed-chart">
             <Chart
@@ -96,7 +98,7 @@ export const EthChart =()=>{
       [{
       data: []
     }])
-    const url=`/v8/finance/chart/ETH-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
+    const url=`/v8/finance/chart/ETH-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
     useEffect(() => 
       {
           let timeoutId;
@@ -107,14 +109,13 @@ export const EthChart =()=>{
               )
               .then((data) => 
                 {
-                  console.log(data.chart);
                   const quote= data.chart.result[0].indicators.quote[0]
                   const prices= data.chart.result[0].timestamp.map((timestamp, index)=>
                 (
                    {
                     x: new Date(timestamp*1000),
-                    y: [quote.open[index], quote.high[index], quote.low[index], quote.close[index]].map(round)}))
-                    setSeries([{
+                    y: [quote.open[index], quote.high[index], quote.low[index], quote.close[index]].map(round)}))    
+                setSeries([{
                       data:prices
                     }])
                    }
@@ -150,7 +151,7 @@ export const EthChart =()=>{
       }
     };
     return (
-      <div style={{width:'95%'}} className="app">
+      <div style={{width:'95%', zIndex:'0'}} className="app">
         <div className="row">
           <div className="mixed-chart">
             <Chart
@@ -175,7 +176,7 @@ export const EthChart =()=>{
       [{
       data: []
     }])
-    const url=`/v8/finance/chart/BNB-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=7d&corsDomain=finance.yahoo.com&.tsrc=finance`
+    const url=`/v8/finance/chart/BNB-USD?region=US&lang=en-US&includePrePost=false&interval=60m&useYfid=true&range=8d&corsDomain=finance.yahoo.com&.tsrc=finance`
     useEffect(() => 
       {
           let timeoutId;
@@ -186,7 +187,6 @@ export const EthChart =()=>{
               )
               .then((data) => 
                 {
-                  console.log(data.chart);
                   const quote= data.chart.result[0].indicators.quote[0]
                   const prices= data.chart.result[0].timestamp.map((timestamp, index)=>
                 (
@@ -214,10 +214,10 @@ export const EthChart =()=>{
           type: 'line',
           height: 250
         },
-        title: {
-          text: 'BNB',
-          align: 'left'
-        },
+        // title: {
+        //   text: 'BNB',
+        //   align: 'left'
+        // },
         xaxis: {
           type: 'datetime'
         },
@@ -229,7 +229,7 @@ export const EthChart =()=>{
       }
     };
     return (
-      <div style={{width:'95%'}} className="app">
+      <div style={{width:'95%',zIndex:'0'}} className="app">
         <div className="row">
           <div className="mixed-chart">
             <Chart
